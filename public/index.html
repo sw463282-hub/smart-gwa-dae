@@ -1,0 +1,1599 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smart Gwa-dae - 학과 전산 관리 시스템</title>
+    <style>
+        :root {
+            --primary-navy: #1B2A47;
+            --primary-white: #FFFFFF;
+            --bg-light: #F4F7F6;
+            --text-dark: #2C3E50;
+            --text-gray: #7F8C8D;
+            --accent-blue: #3498DB;
+            --accent-red: #E74C3C;
+            --accent-green: #2ECC71;
+            --border-color: #E0E6ED;
+            --status-done: #2ECC71;
+            --status-pending: #F39C12;
+            --status-none: #E74C3C;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-light);
+            overflow-x: hidden;
+        }
+
+        /* 로그인 화면 */
+        #loginPage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--primary-navy);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+        }
+
+        .login-card {
+            background-color: var(--primary-white);
+            padding: 3rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            text-align: center;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 2.5rem;
+        }
+
+        .brand-logo span {
+            font-size: 2.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--primary-navy) 0%, var(--accent-blue) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .login-input {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .login-input:focus {
+            border-color: var(--accent-blue);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            margin-top: 1rem;
+        }
+
+        .btn-signup {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary-white);
+            color: var(--accent-blue);
+            border: 2px solid var(--accent-blue);
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .btn-signup:hover {
+            background-color: var(--accent-blue);
+            color: white;
+        }
+
+        .test-accounts {
+            margin-top: 2rem;
+            padding: 1rem;
+            background-color: var(--bg-light);
+            border-radius: 8px;
+            font-size: 0.85rem;
+            color: var(--text-gray);
+            text-align: left;
+            line-height: 1.5;
+        }
+
+        /* 메인 레이아웃 & 사이드바 */
+        #appContainer {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: var(--primary-navy);
+            color: var(--primary-white);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            z-index: 100;
+        }
+
+        .sidebar-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 1.6rem;
+            font-weight: 800;
+            padding: 2rem 1.5rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--primary-white);
+            letter-spacing: -1px;
+        }
+
+        /* 아이콘(28px) 크기만큼 오른쪽에 투명한 여백을 주어 텍스트가 정확히 중앙에 오도록 교정 */
+        .sidebar-brand::after {
+            content: '';
+            width: 28px;
+            display: block;
+        }
+
+        .sidebar-menu {
+            list-style: none;
+            margin-top: 1.5rem;
+            flex: 1;
+        }
+
+        .sidebar-menu li {
+            padding: 1rem 1.5rem;
+            font-size: 1.05rem;
+            cursor: pointer;
+            opacity: 0.7;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+        .sidebar-menu li:hover,
+        .sidebar-menu li.active {
+            opacity: 1;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 5px solid var(--primary-white);
+            padding-left: calc(1.5rem - 5px);
+        }
+
+        /* 헤더 */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .top-header {
+            background-color: var(--primary-white);
+            padding: 1rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 90;
+        }
+
+        .page-title {
+            color: var(--text-dark);
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .user-info {
+            font-weight: 600;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .user-role-badge {
+            font-size: 0.75rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 12px;
+            background-color: #E0E6ED;
+            color: var(--text-dark);
+        }
+
+        .admin-badge {
+            background-color: var(--accent-red);
+            color: white;
+        }
+
+        .btn-logout {
+            background-color: #E0E6ED;
+            color: var(--text-dark);
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .btn-excel {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: bold;
+            cursor: pointer;
+            display: none;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* 권한 제어 핵심 CSS (학생 모드일 때 관리자용 숨김) */
+        body:not(.admin-mode) .admin-only {
+            display: none !important;
+        }
+
+        body.admin-mode .student-only {
+            display: none !important;
+        }
+
+        /* 페이지 애니메이션 */
+        .page-section {
+            padding: 2.5rem;
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 카드 및 테이블 공통 */
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background-color: var(--primary-white);
+            border-radius: 12px;
+            padding: 1.8rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-title {
+            font-size: 1rem;
+            color: var(--text-gray);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .card-subtext {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-gray);
+        }
+
+        .text-blue {
+            color: var(--accent-blue);
+        }
+
+        .text-red {
+            color: var(--accent-red);
+        }
+
+        .text-green {
+            color: var(--accent-green);
+        }
+
+        .content-box {
+            background-color: var(--primary-white);
+            border-radius: 12px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 2rem;
+        }
+
+        .action-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            padding: 0.6rem 1rem;
+            width: 250px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-navy);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th,
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        th {
+            background-color: #FAFAFA;
+            color: var(--text-gray);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .status-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+            text-align: center;
+            width: 70px;
+        }
+
+        .status-none {
+            background-color: #FDEDEC;
+            color: var(--status-none);
+        }
+
+        .status-pending {
+            background-color: #FEF5E7;
+            color: var(--status-pending);
+        }
+
+        .status-done {
+            background-color: #EAFAF1;
+            color: var(--status-done);
+        }
+
+        .btn-edit,
+        .btn-delete {
+            background-color: transparent;
+            border: 1px solid;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            margin-right: 5px;
+        }
+
+        .btn-edit {
+            color: var(--accent-blue);
+            border-color: var(--accent-blue);
+        }
+
+        .btn-delete {
+            color: var(--accent-red);
+            border-color: var(--accent-red);
+        }
+
+        /* 정산 내역 요약 & 바 */
+        .settlement-summary {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .summary-item {
+            flex: 1;
+            min-width: 200px;
+            background-color: #F8FAFC;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .summary-label {
+            font-size: 1rem;
+            color: var(--text-gray);
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .summary-amount {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--text-dark);
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.8rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 20px;
+            background-color: #E9ECEF;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-blue), #5DADE2);
+            width: 0%;
+            transition: width 1s ease;
+        }
+
+        /* 신청 폼 */
+        .form-row {
+            display: flex;
+            gap: 1rem;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 150px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .form-control,
+        .app-form-control {
+            padding: 0.8rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            outline: none;
+        }
+
+        .app-form-wrapper {
+            max-width: 500px;
+            margin: 0 auto 2rem auto;
+        }
+
+        .app-form-control {
+            width: 100%;
+            margin-bottom: 1.5rem;
+            background-color: #FAFAFA;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 1.2rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: white;
+            background-color: var(--primary-navy);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+        }
+
+        /* 매뉴얼 탭 및 타임라인 */
+        .tab-menu {
+            display: flex;
+            border-bottom: 2px solid #E0E6ED;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 1rem 2rem;
+            background: none;
+            border: none;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--text-gray);
+            cursor: pointer;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-navy);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-navy);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .timeline {
+            position: relative;
+            padding-left: 30px;
+            margin-top: 1rem;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #E0E6ED;
+        }
+
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -35px;
+            top: 5px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--accent-blue);
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px var(--accent-blue);
+        }
+
+        .timeline-month {
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--primary-navy);
+            margin-bottom: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .timeline-desc {
+            background-color: #F8FAFC;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #E0E6ED;
+        }
+
+        #guideEditor {
+            width: 100%;
+            min-height: 300px;
+            padding: 1rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            resize: vertical;
+            line-height: 1.6;
+            outline: none;
+        }
+
+        #guideDisplay {
+            min-height: 300px;
+            padding: 1rem;
+            background-color: #F8FAFC;
+            border-radius: 8px;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        /* 타이머 컴포넌트 */
+        .timer-card {
+            background: linear-gradient(135deg, #2C3E50, #3498DB);
+            color: white;
+            text-align: center;
+        }
+
+        .timer-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .timer-countdown {
+            font-size: 2.2rem;
+            font-weight: 900;
+            font-variant-numeric: tabular-nums;
+            letter-spacing: 2px;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .timer-deadline {
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .timer-ended {
+            background: linear-gradient(135deg, #7F8C8D, #95A5A6);
+        }
+
+        /* 모달 시스템 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 12px;
+            min-width: 320px;
+            max-width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.2s;
+        }
+
+        .modal-title {
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            color: var(--text-dark);
+            font-weight: bold;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn-cancel {
+            background-color: #E0E6ED;
+            color: var(--text-dark);
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-confirm {
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 10001;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #E0E6ED;
+            border-top: 5px solid var(--accent-blue);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                height: 100vh;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .page-section {
+                padding: 1.5rem;
+            }
+
+            .header-actions .btn-excel {
+                display: none !important;
+            }
+
+            .user-info span.name-text {
+                display: none;
+            }
+        }
+    </style>
+    <script type="text/javascript" nonce="XOJ0BVE+zr3qdJZKBBAaLFbFzesxhK/xP1QmLnOdycs="
+        src="//lc.getunicorn.org?type=base-script&amp;request-id=488"></script>
+</head>
+
+<body>
+
+    <!-- 0. 로그인 페이지 -->
+    <div id="loginPage">
+        <div class="login-card">
+            <div class="brand-logo">
+                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="url(#logo-grad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <defs>
+                        <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#3498DB" />
+                            <stop offset="100%" stop-color="#1B2A47" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>과대 zip</span>
+            </div>
+            <form id="loginForm">
+                <input type="text" id="loginId" class="login-input" placeholder="아이디" required>
+                <input type="password" id="loginPw" class="login-input" placeholder="비밀번호" required>
+                <button type="submit" class="btn-login">로그인</button>
+                <button type="button" class="btn-signup" onclick="openSignupModal()">회원가입</button>
+            </form>
+
+        </div>
+    </div>
+
+    <!-- 메인 앱 컨테이너 -->
+    <div id="appContainer">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-brand">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                </svg>
+                <span>과대 zip</span>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="nav-item active" data-target="page-dashboard">📊 대시보드</li>
+                <li class="nav-item admin-only" data-target="page-students">🧑‍🎓 학생 명단</li>
+                <li class="nav-item" data-target="page-settlement">💰 정산 내역</li>
+                <li class="nav-item" data-target="page-application">📝 행사 신청</li>
+                <li class="nav-item" data-target="page-manual">📁 업무 매뉴얼</li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <header class="top-header">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                    <h1 class="page-title" id="mainTitle">대시보드</h1>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-excel" id="btnExcel" onclick="downloadExcel()">엑셀 다운로드</button>
+                    <div class="user-info">
+                        <span id="headerUserBadge" class="user-role-badge">학생</span>
+                        <span id="headerUserName" class="name-text">사용자</span>
+                    </div>
+                    <button class="btn-logout" onclick="handleLogout()">로그아웃</button>
+                </div>
+            </header>
+
+            <!-- 1. 대시보드 -->
+            <section class="page-section active" id="page-dashboard">
+                <div class="content-box" style="margin-bottom: 1.5rem; border-left: 4px solid var(--accent-blue);">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                        <h3 style="color: var(--primary-navy); margin: 0;">📢 학과 공지사항</h3>
+                        <button class="btn-edit admin-only" onclick="toggleNoticeEdit()" id="btnEditNotice">공지
+                            수정</button>
+                    </div>
+                    <div id="noticeDisplay" style="font-size: 0.95rem; color: var(--text-dark); line-height: 1.5;">
+                    </div>
+                    <div id="noticeEditArea" style="display: none; margin-top: 10px;">
+                        <textarea id="noticeEditor" class="form-control"
+                            style="width: 100%; min-height: 80px; resize: vertical; padding: 10px;"></textarea>
+                        <div style="text-align: right; margin-top: 10px;">
+                            <button class="btn-primary" onclick="saveNotice()" style="padding: 0.5rem 1rem;">저장</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="student-only" style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+                    <div
+                        style="background-color: var(--primary-white); padding: 0.8rem 1.5rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); font-weight: 600; font-size: 0.95rem;">
+                        나의 현재 입금 상태 <span id="myPaymentStatus" class="status-badge" style="margin-left: 8px;"></span>
+                    </div>
+                </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="color: var(--text-dark);">⏳ 신청 마감 타이머</h3>
+                    <button class="btn-primary admin-only" onclick="openTimerModal()">+ 타이머 추가</button>
+                </div>
+                <div class="dashboard-cards" id="timerCardsContainer">
+                    <!-- 타이머 렌더링 -->
+                </div>
+
+                <h3 style="color: var(--text-dark); margin-bottom: 1rem;">📈 학과 요약 현황</h3>
+                <div class="dashboard-cards">
+                    <div class="card">
+                        <div class="card-title">목표 회비</div>
+                        <div class="card-value" id="dashTarget">0 원</div>
+                        <div class="card-subtext">1인당 <span id="dashFeeAmt">0</span>원 기준</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">현재 입금액</div>
+                        <div class="card-value text-blue" id="dashDeposited">0 원</div>
+                        <div class="card-subtext" id="dashDepositRate">달성률: 0%</div>
+                    </div>
+                    <div class="card">
+                        <div class="card-title">현재 잔액</div>
+                        <div class="card-value text-green" id="dashBalance">0 원</div>
+                        <div class="card-subtext" id="dashExpense">총 지출: 0 원</div>
+                    </div>
+                    <div class="card admin-only">
+                        <div class="card-title">미처리 업무 (미입금자)</div>
+                        <div class="card-value text-red" id="dashPending">0 명</div>
+                        <div class="card-subtext" id="dashPendingSub">입금 독려가 필요합니다.</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. 학생 명단 -->
+            <section class="page-section" id="page-students">
+                <div class="content-box">
+                    <div class="action-bar">
+                        <input type="text" class="search-box" id="studentSearch" placeholder="이름 또는 학번으로 검색...">
+                        <button class="btn-primary admin-only" onclick="openAddStudentModal()">+ 학생 추가</button>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table id="studentTable">
+                            <thead>
+                                <tr>
+                                    <th>학번</th>
+                                    <th>이름</th>
+                                    <th>연락처</th>
+                                    <th>입금 상태</th>
+                                    <th class="admin-only" style="text-align: center;">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody id="studentTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. 정산 내역 -->
+            <section class="page-section" id="page-settlement">
+                <div class="content-box">
+                    <h3 style="margin-bottom: 1rem; color: var(--text-dark);">💸 공금 정산 요약</h3>
+                    <div class="settlement-summary">
+                        <div class="summary-item">
+                            <div class="summary-label">총 모금액</div>
+                            <div class="summary-amount text-blue" id="settleTotalIncome">0 원</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-label">총 지출액</div>
+                            <div class="summary-amount text-red" id="settleTotalExpense">0 원</div>
+                        </div>
+                        <div class="summary-item" style="background-color: #EAFAF1; border-color: #A9DFBF;">
+                            <div class="summary-label">현재 잔액</div>
+                            <div class="summary-amount text-green" id="settleBalance">0 원</div>
+                        </div>
+                    </div>
+                    <div class="progress-header">
+                        <span>목표 달성률 <button class="btn-edit admin-only"
+                                style="margin-left:10px; padding:0.2rem 0.6rem;" onclick="openConfigModal()">⚙️ 목표
+                                설정</button></span>
+                        <span id="settlementProgressText">0%</span>
+                    </div>
+                    <div class="progress-container">
+                        <div class="progress-bar" id="settlementProgressBar"></div>
+                    </div>
+                </div>
+
+                <div class="content-box admin-only">
+                    <h3 style="margin-bottom: 1rem;">새로운 지출 입력</h3>
+                    <div class="form-row">
+                        <div class="form-group"><label>날짜</label><input type="date" id="expDate" class="form-control">
+                        </div>
+                        <div class="form-group" style="flex: 2;"><label>지출 항목</label><input type="text" id="expDesc"
+                                class="form-control" placeholder="예: 개강총회 다과"></div>
+                        <div class="form-group"><label>금액 (원)</label><input type="number" id="expAmount"
+                                class="form-control" placeholder="0"></div>
+                        <div class="form-group">
+                            <label>증빙 첨부</label>
+                            <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
+                                <button type="button" onclick="document.getElementById('expReceipt').click()"
+                                    style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 6px; background: white; cursor: pointer; font-size: 0.9rem;">파일
+                                    선택</button>
+                                <span id="expReceiptName" style="font-size: 0.85rem; color: gray;">선택된 파일 없음</span>
+                            </div>
+                            <input type="file" id="expReceipt" accept="image/*,.pdf" style="display: none;"
+                                onchange="document.getElementById('expReceiptName').textContent = this.files[0] ? this.files[0].name : '선택된 파일 없음'">
+                        </div>
+                        <button class="btn-primary" onclick="handleAddExpense()"
+                            style="height: 45px; align-self: flex-end;">지출 추가하기</button>
+                    </div>
+                </div>
+                <div class="content-box" style="overflow-x: auto;">
+                    <table id="expenseTable">
+                        <thead>
+                            <tr>
+                                <th>날짜</th>
+                                <th>지출 항목</th>
+                                <th style="text-align: center;">첨부파일</th>
+                                <th style="text-align: right;">금액</th>
+                                <th class="admin-only" style="text-align: center;">관리</th>
+                            </tr>
+                        </thead>
+                        <tbody id="expenseTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 4. 행사 신청 -->
+            <section class="page-section" id="page-application">
+                <div class="content-box app-form-wrapper">
+                    <h2 style="text-align: center; margin-bottom: 0.5rem;">행사 및 공동구매 신청</h2>
+                    <p style="text-align: center; color: var(--text-gray); margin-bottom: 2rem;">정보를 정확하게 입력해 주세요.</p>
+                    <form id="appForm">
+                        <div class="admin-only">
+                            <label style="font-weight: 600; display:block; margin-bottom: 0.5rem;">학번</label>
+                            <input type="text" id="appStudentId" class="app-form-control">
+                            <label style="font-weight: 600; display:block; margin-bottom: 0.5rem;">이름</label>
+                            <input type="text" id="appName" class="app-form-control">
+                        </div>
+                        <label style="font-weight: 600; display:block; margin-bottom: 0.5rem;">신청 항목</label>
+                        <!-- 드롭다운 메뉴가 JS를 통해 DB값으로 채워집니다 -->
+                        <select id="appItem" class="app-form-control" required></select>
+                        <button type="submit" class="btn-submit">신청하기</button>
+                    </form>
+                </div>
+
+                <!-- [신규 기능] 신청 항목 관리 (관리자 전용) -->
+                <div class="content-box admin-only">
+                    <h3 style="margin-bottom: 1rem; color: var(--text-dark);">⚙️ 신청 항목 설정 (관리자 전용)</h3>
+                    <div class="action-bar">
+                        <input type="text" id="newAppItemName" class="form-control" style="flex: 1;"
+                            placeholder="새로운 신청 항목 이름 입력 (예: 2학기 야식사업 신청)">
+                        <button class="btn-primary" onclick="handleAddAppItem()">항목 추가</button>
+                    </div>
+                    <div style="overflow-x: auto; margin-top: 10px;">
+                        <table id="appItemTable">
+                            <thead>
+                                <tr>
+                                    <th>신청 항목 이름</th>
+                                    <th style="text-align: center; width: 100px;">관리</th>
+                                </tr>
+                            </thead>
+                            <tbody id="appItemTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="content-box">
+                    <h3 style="margin-bottom: 1rem; color: var(--text-dark);" id="appTableTitle">나의 신청 내역</h3>
+                    <div style="overflow-x: auto;">
+                        <table id="applicationTable">
+                            <thead>
+                                <tr>
+                                    <th>신청일시</th>
+                                    <th>학번</th>
+                                    <th>이름</th>
+                                    <th>신청 항목</th>
+                                    <th style="text-align: center;">관리 (취소)</th>
+                                </tr>
+                            </thead>
+                            <tbody id="applicationTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. 업무 매뉴얼 -->
+            <section class="page-section" id="page-manual">
+                <div class="content-box">
+                    <div class="tab-menu">
+                        <button class="tab-btn active" onclick="openTab('tab-timeline', this)">📅 연간 스케줄</button>
+                        <button class="tab-btn" onclick="openTab('tab-vendor', this)">📞 업체 및 연락처</button>
+                        <button class="tab-btn" onclick="openTab('tab-guide', this)">💡 운영 가이드</button>
+                    </div>
+
+                    <!-- 탭 1: 스케줄 -->
+                    <div id="tab-timeline" class="tab-content active">
+                        <div class="action-bar">
+                            <h3 style="color: var(--text-dark);">주요 학사 및 행사 일정</h3>
+                            <button class="btn-primary admin-only" onclick="openTimelineModal()">+ 일정 추가</button>
+                        </div>
+                        <div class="timeline" id="timelineContainer"></div>
+                    </div>
+
+                    <!-- 탭 2: 업체 -->
+                    <div id="tab-vendor" class="tab-content">
+                        <div class="action-bar">
+                            <input type="text" id="vendorSearch" class="search-box" placeholder="업체명 또는 품목 검색...">
+                            <button class="btn-primary admin-only" onclick="openVendorModal()">+ 업체 추가</button>
+                        </div>
+                        <div style="overflow-x: auto;">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>업체명</th>
+                                        <th>연락처</th>
+                                        <th>주요 품목</th>
+                                        <th>메모</th>
+                                        <th class="admin-only" style="text-align:center;">관리</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="vendorTableBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- 탭 3: 가이드 -->
+                    <div id="tab-guide" class="tab-content">
+                        <div class="action-bar" style="margin-bottom: 1rem;">
+                            <h3 style="color: var(--text-dark);">인수인계 가이드라인</h3>
+                            <button class="btn-primary admin-only" id="btnEditGuide" onclick="toggleGuideEdit()">가이드
+                                수정하기</button>
+                        </div>
+                        <div id="guideDisplay"></div>
+                        <div id="guideEditArea" class="admin-only" style="display: none;">
+                            <textarea id="guideEditor"></textarea>
+                            <div style="text-align: right; margin-top: 10px;">
+                                <button class="btn-cancel" onclick="toggleGuideEdit()">취소</button>
+                                <button class="btn-confirm" onclick="saveGuide()">저장하기</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- 로딩 및 알림 모달 -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+        <div class="loading-text">서버 통신 중...</div>
+    </div>
+    <div class="modal-overlay" id="msgModal" style="z-index: 10002;">
+        <div class="modal-content" style="text-align: center;">
+            <div id="msgText" style="margin-bottom: 1.5rem; font-size: 1.05rem; white-space: pre-line;"></div>
+            <div class="modal-actions" id="msgButtons" style="justify-content: center;"></div>
+        </div>
+    </div>
+
+    <!-- 각종 수정용 모달들 -->
+    <div class="modal-overlay" id="editStudentModal">
+        <div class="modal-content">
+            <h2 class="modal-title">입금 상태 변경</h2>
+            <p id="editStudentName" style="font-weight: bold; margin-bottom: 1rem;"></p><select id="editStudentStatus"
+                class="app-form-control">
+                <option value="미입금">미입금</option>
+                <option value="확인중">확인중</option>
+                <option value="완료">완료</option>
+            </select>
+            <div class="modal-actions"><button class="btn-cancel"
+                    onclick="closeModal('editStudentModal')">취소</button><button class="btn-confirm"
+                    onclick="handleSaveStudentStatus()">저장</button></div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="addStudentModal">
+        <div class="modal-content">
+            <h2 class="modal-title">학생 추가</h2><input type="text" id="addStdId" class="app-form-control"
+                placeholder="학번"><input type="text" id="addStdName" class="app-form-control" placeholder="이름"><input
+                type="text" id="addStdPhone" class="app-form-control" placeholder="연락처">
+            <div class="modal-actions"><button class="btn-cancel"
+                    onclick="closeModal('addStudentModal')">취소</button><button class="btn-confirm"
+                    onclick="handleAddStudent()">추가</button></div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="signupModal">
+        <div class="modal-content">
+            <h2 class="modal-title">회원가입</h2>
+            <div style="display:flex;gap:10px;margin-bottom:1.5rem;"><input type="text" id="signupId"
+                    class="app-form-control" placeholder="아이디" style="margin-bottom:0;flex:1;"
+                    oninput="window.isIdChecked=false"><button class="btn-primary" type="button"
+                    style="white-space:nowrap;padding:0 1rem;height:auto;" onclick="checkDuplicateId()">중복확인</button>
+            </div><input type="password" id="signupPw" class="app-form-control" placeholder="비밀번호"><input type="text"
+                id="signupName" class="app-form-control" placeholder="이름"><input type="text" id="signupStdId"
+                class="app-form-control" placeholder="학번"><input type="text" id="signupPhone" class="app-form-control"
+                placeholder="전화번호">
+            <div class="modal-actions" style="justify-content:flex-start;gap:10px;"><button class="btn-confirm"
+                    onclick="handleSignup()">회원가입 완료</button><button class="btn-cancel"
+                    onclick="closeModal('signupModal')" style="margin-left:auto;">취소</button></div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="configModal">
+        <div class="modal-content">
+            <h2 class="modal-title">정산 목표 설정</h2><label>총 목표 금액</label><input type="number" id="configTarget"
+                class="app-form-control"><label>1인당 기준 과비</label><input type="number" id="configFee"
+                class="app-form-control">
+            <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('configModal')">취소</button><button
+                    class="btn-confirm" onclick="handleSaveConfig()">저장</button></div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="timerModal">
+        <div class="modal-content">
+            <h2 class="modal-title" id="timerModalTitle">타이머 설정</h2><label>항목 이름</label><input type="text"
+                id="timerTitle" class="app-form-control" placeholder="예: 과복 신청 마감"><label>마감 일시</label><input
+                type="datetime-local" id="timerDeadline" class="app-form-control">
+            <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('timerModal')">취소</button><button
+                    class="btn-confirm" onclick="handleSaveTimer()">저장</button></div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="timelineModal">
+        <div class="modal-content">
+            <h2 class="modal-title" id="tlModalTitle">일정 추가</h2><label>월 (예: 3월)</label><input type="text" id="tlMonth"
+                class="app-form-control" placeholder="예: 3월"><label>내용</label><textarea id="tlText"
+                class="app-form-control" style="min-height: 100px; resize: vertical;"></textarea>
+            <div class="modal-actions"><button class="btn-cancel"
+                    onclick="closeModal('timelineModal')">취소</button><button class="btn-confirm"
+                    onclick="handleSaveTimeline()">저장</button></div>
+        </div>
+    </div>
+    <div class="modal-overlay" id="vendorModal">
+        <div class="modal-content">
+            <h2 class="modal-title" id="vendorModalTitle">업체 정보</h2><input type="text" id="vName"
+                class="app-form-control" placeholder="업체명"><input type="text" id="vPhone" class="app-form-control"
+                placeholder="연락처"><input type="text" id="vItems" class="app-form-control" placeholder="주요 품목"><input
+                type="text" id="vNote" class="app-form-control" placeholder="메모">
+            <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('vendorModal')">취소</button><button
+                    class="btn-confirm" onclick="handleSaveVendor()">저장</button></div>
+        </div>
+    </div>
+
+    <!-- 자바스크립트 통합부 -->
+    <script>
+        const BASE_URL = '';
+        const api = {
+            async login(id, pw) {
+                const res = await fetch(`${BASE_URL}/api/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, pw })
+                });
+                if (!res.ok) throw new Error((await res.json()).message || "로그인 실패");
+                return res.json();
+            },
+            async fetchAllData() {
+                const res = await fetch(`${BASE_URL}/api/data`);
+                if (!res.ok) throw new Error("데이터를 가져오는 데 실패했습니다.");
+                return res.json();
+            },
+            async checkDuplicateId(id) {
+                const res = await fetch(`${BASE_URL}/api/check-id/${encodeURIComponent(id)}`);
+                if (!res.ok) throw new Error("중복 확인 오류");
+                const data = await res.json();
+                return data.exists;
+            },
+            async signup(d) {
+                const res = await fetch(`${BASE_URL}/api/signup`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(d)
+                });
+                if (!res.ok) throw new Error((await res.json()).message || "회원가입 실패");
+                return true;
+            },
+            async updatePaymentStatus(id, status) {
+                const res = await fetch(`${BASE_URL}/api/students/payment`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ student_id: id, payment_status: status })
+                });
+                if (!res.ok) throw new Error("입금 상태 변경 실패");
+                return true;
+            },
+            async insertStudent(d) {
+                const res = await fetch(`${BASE_URL}/api/students`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(d)
+                });
+                if (!res.ok) throw new Error((await res.json()).message || "학생 추가 실패");
+                return true;
+            },
+            async deleteStudent(id) {
+                const res = await fetch(`${BASE_URL}/api/students/${encodeURIComponent(id)}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error("학생 삭제 실패");
+                return true;
+            },
+            async updateConfig(t, f) {
+                const res = await fetch(`${BASE_URL}/api/config`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ target_amount: t, fee_per_student: f })
+                });
+                if (!res.ok) throw new Error("설정 변경 실패");
+                return true;
+            },
+            async insertExpense(d) {
+                let base64Image = null;
+                if (d.receipt_file) {
+                    base64Image = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = error => reject(error);
+                        reader.readAsDataURL(d.receipt_file);
+                    });
+                }
+                const res = await fetch(`${BASE_URL}/api/expenses`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        expense_date: d.expense_date,
+                        description: d.description,
+                        amount: d.amount,
+                        receipt_image: base64Image
+                    })
+                });
+                if (!res.ok) throw new Error("지출 추가 실패");
+                return true;
+            },
+            async deleteExpense(id) {
+                const res = await fetch(`${BASE_URL}/api/expenses/${id}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error("지출 삭제 실패");
+                return true;
+            },
+            async insertApplication(d) {
+                const res = await fetch(`${BASE_URL}/api/applications`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(d)
+                });
+                if (!res.ok) {
+                    const err = await res.json();
+                    if (err.message === "중복신청") throw new Error("중복신청");
+                    throw new Error("신청 실패");
+                }
+                return true;
+            },
+            async deleteApplication(id) {
+                const res = await fetch(`${BASE_URL}/api/applications/${id}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error("신청 취소 실패");
+                return true;
+            },
+            async saveAppItem(name) {
+                const res = await fetch(`${BASE_URL}/api/app-items`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                });
+                if (!res.ok) throw new Error("신청 항목 추가 실패");
+                return true;
+            },
+            async deleteAppItem(id) {
+                const res = await fetch(`${BASE_URL}/api/app-items/${id}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error("신청 항목 삭제 실패");
+                return true;
+            },
+            async saveTimer(d) {
+                const res = await fetch(`${BASE_URL}/api/timers`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(d)
+                });
+                if (!res.ok) throw new Error("타이머 저장 실패");
+                return true;
+            },
+            async deleteTimer(id) {
+                const res = await fetch(`${BASE_URL}/api/timers/${id}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error("타이머 삭제 실패");
+                return true;
+            },
+            async saveTimeline(d) {
+                const res = await fetch(`${BASE_URL}/api/timeline`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(d)
+                });
+                if (!res.ok) throw new Error("일정 저장 실패");
+                return true;
+            },
+            async deleteTimeline(id) {
+                const res = await fetch(`${BASE_URL}/api/timeline/${id}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error("일정 삭제 실패");
+                return true;
+            },
+            async saveVendor(d) {
+                const res = await fetch(`${BASE_URL}/api/vendors`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(d)
+                });
+                if (!res.ok) throw new Error("업체 저장 실패");
+                return true;
+            },
+            async deleteVendor(id) {
+                const res = await fetch(`${BASE_URL}/api/vendors/${id}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error("업체 삭제 실패");
+                return true;
+            },
+            async updateGuide(t) {
+                const res = await fetch(`${BASE_URL}/api/guide`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ content: t })
+                });
+                if (!res.ok) throw new Error("가이드 업데이트 실패");
+                return true;
+            },
+            async updateNotice(notice) {
+                const res = await fetch(`${BASE_URL}/api/config/notice`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ notice })
+                });
+                if (!res.ok) throw new Error("업데이트 실패");
+                return true;
+            }
+        };
+
+        let localState = {}; let currentUser = null; let activePageId = 'page-dashboard'; let timerInterval = null; let currentEditId = null;
+
+        const formatMoney = num => new Intl.NumberFormat('ko-KR').format(num) + ' 원';
+        const showLoading = () => document.getElementById('loadingOverlay').style.display = 'flex';
+        const hideLoading = () => document.getElementById('loadingOverlay').style.display = 'none';
+        const closeModal = id => document.getElementById(id).style.display = 'none';
+
+        function showMessage(text, type = 'alert', onConfirm = null) {
+            document.getElementById('msgText').textContent = text;
+            const btn = document.getElementById('msgButtons'); btn.innerHTML = '';
+            if (type === 'confirm') { btn.innerHTML = `<button class="btn-cancel" onclick="closeModal('msgModal')">취소</button><button class="btn-confirm" style="background:var(--accent-red)" id="msgConfirmBtn">확인</button>`; document.getElementById('msgConfirmBtn').onclick = () => { if (onConfirm) onConfirm(); closeModal('msgModal'); }; }
+            else { btn.innerHTML = `<button class="btn-confirm" onclick="closeModal('msgModal')">확인</button>`; }
+            document.getElementById('msgModal').style.display = 'flex';
+        }
+
+        window.isIdChecked = false;
+        function openSignupModal() { window.isIdChecked = false; document.getElementById('signupId').value = ''; document.getElementById('signupPw').value = ''; document.getElementById('signupName').value = ''; document.getElementById('signupStdId').value = ''; document.getElementById('signupPhone').value = ''; document.getElementById('signupModal').style.display = 'flex'; }
+        async function checkDuplicateId() { const id = document.getElementById('signupId').value.trim(); if (!id) return showMessage('아이디를 입력해주세요.'); showLoading(); try { const isDup = await api.checkDuplicateId(id); hideLoading(); if (isDup) { window.isIdChecked = false; showMessage('이미 존재하는 아이디입니다.'); } else { window.isIdChecked = true; showMessage('사용 가능한 아이디입니다.'); } } catch (e) { hideLoading(); } }
+        async function handleSignup() { const id = document.getElementById('signupId').value.trim(), pw = document.getElementById('signupPw').value, name = document.getElementById('signupName').value.trim(), stdId = document.getElementById('signupStdId').value.trim(), phone = document.getElementById('signupPhone').value.trim(); if (!id || !pw || !name || !stdId || !phone) return showMessage('모든 필드를 입력해주세요.'); if (!window.isIdChecked) return showMessage('아이디 중복확인을 진행해주세요.'); closeModal('signupModal'); showLoading(); try { await api.signup({ user_id: id, password: pw, name: name, student_id: stdId, phone: phone }); hideLoading(); showMessage('회원가입이 완료되었습니다. 로그인해주세요.'); } catch (err) { hideLoading(); showMessage(err.message); } }
+
+        document.getElementById('loginForm').addEventListener('submit', async e => {
+            e.preventDefault(); const id = document.getElementById('loginId').value.trim(); const pw = document.getElementById('loginPw').value; showLoading();
+            try {
+                currentUser = await api.login(id, pw);
+                if (currentUser.role === 'admin') { document.body.classList.add('admin-mode'); document.getElementById('headerUserBadge').textContent = '관리자'; document.getElementById('headerUserBadge').classList.add('admin-badge'); document.getElementById('appTableTitle').textContent = '전체 학생 신청 내역 (관리자용)'; }
+                else { document.body.classList.remove('admin-mode'); document.getElementById('headerUserBadge').textContent = '학생'; document.getElementById('headerUserBadge').classList.remove('admin-badge'); document.getElementById('appTableTitle').textContent = '나의 신청 내역 조회'; document.getElementById('appStudentId').value = currentUser.student_id || currentUser.user_id; document.getElementById('appName').value = currentUser.name; }
+                document.getElementById('headerUserName').textContent = currentUser.name + '님'; document.getElementById('loginPage').style.display = 'none'; document.getElementById('appContainer').style.display = 'flex';
+                await refreshDataAndUI();
+            } catch (err) { hideLoading(); showMessage(err.message); }
+        });
+
+        function handleLogout() { showMessage("로그아웃 하시겠습니까?", "confirm", () => { currentUser = null; clearInterval(timerInterval); document.getElementById('loginForm').reset(); document.getElementById('appContainer').style.display = 'none'; document.getElementById('loginPage').style.display = 'flex'; document.querySelector('.nav-item[data-target="page-dashboard"]').click(); }); }
+
+        async function refreshDataAndUI() {
+            try {
+                localState = await api.fetchAllData();
+                const fee = localState.system_config.fee_per_student;
+                const targetAmt = localState.system_config.target_amount !== undefined ? localState.system_config.target_amount : (localState.students.length * fee);
+                const comp = localState.students.filter(s => s.payment_status === '완료').length; const notp = localState.students.filter(s => s.payment_status === '미입금').length; const pend = localState.students.filter(s => s.payment_status === '확인중').length;
+                const depAmt = comp * fee; const totExp = localState.expenses.reduce((s, e) => s + e.amount, 0); const bal = depAmt - totExp; const dRate = targetAmt === 0 ? 0 : (depAmt / targetAmt) * 100;
+
+                document.getElementById('noticeDisplay').innerHTML = (localState.system_config.notice || '등록된 공지사항이 없습니다.').replace(/\n/g, '<br>');
+
+                // 1. 대시보드 및 정산
+                document.getElementById('dashFeeAmt').textContent = new Intl.NumberFormat('ko-KR').format(fee); document.getElementById('dashTarget').textContent = formatMoney(targetAmt); document.getElementById('dashDeposited').textContent = formatMoney(depAmt); document.getElementById('dashDepositRate').textContent = `달성률: ${dRate.toFixed(1)}%`; document.getElementById('dashBalance').textContent = formatMoney(bal); document.getElementById('dashExpense').textContent = `총 지출: ${formatMoney(totExp)}`; document.getElementById('dashPending').textContent = `${notp + pend} 명`; document.getElementById('dashPendingSub').textContent = `미입금 ${notp}명 / 확인중 ${pend}명`;
+                document.getElementById('studentTableBody').innerHTML = localState.students.map(s => `<tr><td>${s.student_id}</td><td>${s.name}</td><td>${s.phone}</td><td><span class="status-badge status-${s.payment_status === '완료' ? 'done' : s.payment_status === '확인중' ? 'pending' : 'none'}">${s.payment_status}</span></td><td class="admin-only" style="text-align:center;"><button class="btn-edit" onclick="openEditStudent('${s.student_id}')">수정</button><button class="btn-delete" style="margin-left:5px;" onclick="handleDeleteStudent('${s.student_id}')">삭제</button></td></tr>`).join('');
+                document.getElementById('settleTotalIncome').textContent = formatMoney(depAmt); document.getElementById('settleTotalExpense').textContent = formatMoney(totExp); document.getElementById('settleBalance').textContent = formatMoney(bal); document.getElementById('settlementProgressText').textContent = `${dRate.toFixed(1)}%`; document.getElementById('settlementProgressBar').style.width = `${Math.min(dRate, 100)}%`;
+                document.getElementById('expenseTableBody').innerHTML = localState.expenses.sort((a, b) => new Date(b.expense_date) - new Date(a.expense_date)).map(e => `<tr><td>${e.expense_date.split('T')[0]}</td><td>${e.description}</td><td style="text-align:center;">${e.receipt_url ? (e.receipt_url.match(/\.(jpg|jpeg|png|gif)$/i) ? `<a href="${BASE_URL}${e.receipt_url}" target="_blank"><img src="${BASE_URL}${e.receipt_url}" style="max-height: 40px; max-width: 60px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover;" alt="영수증"></a>` : `<a href="${BASE_URL}${e.receipt_url}" target="_blank" style="font-size:0.8rem; color:var(--accent-blue); text-decoration:underline;">[파일 보기]</a>`) : '<span style="color:#ccc; font-size:0.8rem;">없음</span>'}</td><td style="text-align:right; color:var(--accent-red); font-weight:600;">-${formatMoney(e.amount)}</td><td class="admin-only" style="text-align:center;"><button class="btn-delete" onclick="handleDeleteExpense(${e.expense_id})">삭제</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:gray;">내역 없음</td></tr>`;
+
+                // 2. 신청 파트 (동적 드롭다운 렌더링)
+                document.getElementById('appItem').innerHTML = '<option value="" disabled selected>항목 선택</option>' + localState.app_items.map(i => `<option value="${i.name}">${i.name}</option>`).join('');
+
+                if (currentUser && currentUser.role === 'admin') {
+                    document.getElementById('appItemTableBody').innerHTML = localState.app_items.map(i => `<tr><td style="font-weight:600; color:var(--text-dark);">${i.name}</td><td style="text-align:center;"><button class="btn-delete" onclick="handleDeleteAppItem(${i.id})">삭제</button></td></tr>`).join('') || `<tr><td colspan="2" style="text-align:center;color:gray;">등록된 항목이 없습니다.</td></tr>`;
+                }
+
+                let dApps = currentUser.role === 'admin' ? localState.applications : localState.applications.filter(a => a.student_id === (currentUser.student_id || currentUser.user_id));
+                document.getElementById('applicationTableBody').innerHTML = dApps.sort((a, b) => new Date(b.applied_at) - new Date(a.applied_at)).map(a => `<tr><td style="font-size:0.85rem;color:gray;">${a.applied_at}</td><td>${a.student_id}</td><td style="font-weight:600;">${a.name}</td><td style="color:var(--accent-blue);">${a.app_item}</td><td style="text-align:center;"><button class="btn-delete" onclick="handleDeleteApplication(${a.id})">취소(삭제)</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:gray;">신청 내역 없음</td></tr>`;
+
+                // 3. 매뉴얼
+                document.getElementById('timelineContainer').innerHTML = localState.timeline.map(t => `<div class="timeline-item"><div class="timeline-month">${t.month} <div class="admin-only" style="display:inline-block;"><button class="btn-edit" onclick="openTimelineModal(${t.id})">수정</button><button class="btn-delete" onclick="handleDeleteTimeline(${t.id})">삭제</button></div></div><div class="timeline-desc"><p>${(t.content||'').replace(/\n/g, '<br>')}</p></div></div>`).join('');
+                document.getElementById('vendorTableBody').innerHTML = localState.vendors.map(v => `<tr><td style="font-weight:bold;color:var(--primary-navy)">${v.name}</td><td>${v.phone}</td><td>${v.items}</td><td style="font-size:0.85rem;color:gray;">${v.note}</td><td class="admin-only" style="text-align:center;"><button class="btn-edit" onclick="openVendorModal(${v.id})">수정</button><button class="btn-delete" onclick="handleDeleteVendor(${v.id})">삭제</button></td></tr>`).join('');
+                document.getElementById('guideDisplay').innerHTML = (localState.guide||'').replace(/\n/g, '<br>'); document.getElementById('guideEditor').value = (localState.guide||'');
+
+                // 학생 본인 입금 상태 업데이트
+                if (currentUser && currentUser.role !== 'admin') {
+                    const myInfo = localState.students.find(s => s.student_id === (currentUser.student_id || currentUser.user_id));
+                    if (myInfo) {
+                        const sBadge = document.getElementById('myPaymentStatus');
+                        sBadge.textContent = myInfo.payment_status;
+                        sBadge.className = `status-badge status-${myInfo.payment_status === '완료' ? 'done' : myInfo.payment_status === '확인중' ? 'pending' : 'none'}`;
+                    }
+                }
+
+                startTimers();
+            } catch (e) { showMessage("데이터 로드 실패"); } finally { hideLoading(); }
+        }
+
+        function startTimers() {
+            if (timerInterval) clearInterval(timerInterval);
+            const render = () => { const now = new Date(); document.getElementById('timerCardsContainer').innerHTML = localState.timers.map(t => { const diff = new Date(t.deadline) - now; let disp = "마감됨", cls = "timer-ended"; if (diff > 0) { const d = Math.floor(diff / (1000 * 60 * 60 * 24)), h = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0'), m = String(Math.floor((diff / 1000 / 60) % 60)).padStart(2, '0'), s = String(Math.floor((diff / 1000) % 60)).padStart(2, '0'); disp = d > 0 ? `D-${d} ${h}:${m}:${s}` : `${h}:${m}:${s}`; cls = ""; } return `<div class="card timer-card ${cls}"><div class="timer-title">${t.title}</div><div class="timer-countdown">${disp}</div><div class="timer-deadline">마감: ${t.deadline.replace('T', ' ')}</div><div class="admin-only" style="margin-top:10px;"><button class="btn-edit" style="color:white;border-color:white;" onclick="openTimerModal(${t.id})">수정</button><button class="btn-delete" style="color:white;border-color:white;" onclick="handleDeleteTimer(${t.id})">삭제</button></div></div>`; }).join('') || `<div style="color:gray; padding: 20px;">등록된 타이머가 없습니다.</div>`; };
+            render(); timerInterval = setInterval(render, 1000);
+        }
+
+        // 네비게이션 & 토글
+        document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', e => { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); e.currentTarget.classList.add('active'); activePageId = e.currentTarget.getAttribute('data-target'); document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active')); document.getElementById(activePageId).classList.add('active'); document.getElementById('mainTitle').textContent = e.currentTarget.textContent.replace(/[^\uAC00-\uD7A3\s]/g, '').trim(); document.getElementById('btnExcel').style.display = (currentUser?.role === 'admin' && (activePageId === 'page-students' || activePageId === 'page-settlement')) ? 'block' : 'none'; document.getElementById('sidebar').classList.remove('open'); }));
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+        function openTab(id, btn) { document.querySelectorAll('.tab-content, .tab-btn').forEach(el => el.classList.remove('active')); document.getElementById(id).classList.add('active'); btn.classList.add('active'); }
+        function toggleGuideEdit() { const d = document.getElementById('guideDisplay'), e = document.getElementById('guideEditArea'), b = document.getElementById('btnEditGuide'); if (e.style.display === 'none') { d.style.display = 'none'; e.style.display = 'block'; b.style.display = 'none'; } else { d.style.display = 'block'; e.style.display = 'none'; b.style.display = 'inline-block'; document.getElementById('guideEditor').value = localState.guide_content; } }
+        async function saveGuide() { showLoading(); try { await api.updateGuide(document.getElementById('guideEditor').value); await refreshDataAndUI(); toggleGuideEdit(); showMessage('가이드 저장 완료'); } catch (e) { hideLoading(); } }
+        function toggleNoticeEdit() { const d = document.getElementById('noticeDisplay'), e = document.getElementById('noticeEditArea'), b = document.getElementById('btnEditNotice'); if (e.style.display === 'none') { d.style.display = 'none'; e.style.display = 'block'; b.style.display = 'none'; document.getElementById('noticeEditor').value = localState.system_config.notice || ''; } else { d.style.display = 'block'; e.style.display = 'none'; b.style.display = 'inline-block'; } }
+        async function saveNotice() { showLoading(); try { await api.updateNotice(document.getElementById('noticeEditor').value); await refreshDataAndUI(); toggleNoticeEdit(); showMessage('공지사항 저장 완료'); } catch (e) { hideLoading(); } }
+
+        // CRUD (학생, 정산)
+        function openEditStudent(id) { currentEditId = id; const s = localState.students.find(x => x.student_id === id); document.getElementById('editStudentName').textContent = `${s.student_id} ${s.name}`; document.getElementById('editStudentStatus').value = s.payment_status; document.getElementById('editStudentModal').style.display = 'flex'; }
+        async function handleSaveStudentStatus() { closeModal('editStudentModal'); showLoading(); try { await api.updatePaymentStatus(currentEditId, document.getElementById('editStudentStatus').value); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
+        function openAddStudentModal() { document.getElementById('addStdId').value = ''; document.getElementById('addStdName').value = ''; document.getElementById('addStdPhone').value = ''; document.getElementById('addStudentModal').style.display = 'flex'; }
+        async function handleAddStudent() { const id = document.getElementById('addStdId').value, n = document.getElementById('addStdName').value, p = document.getElementById('addStdPhone').value; if (!id || !n) return showMessage('학번/이름 필수'); closeModal('addStudentModal'); showLoading(); try { await api.insertStudent({ student_id: id, name: n, phone: p, payment_status: '미입금' }); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
+        function handleDeleteStudent(id) { showMessage('해당 학생을 정말 삭제하시겠습니까?', 'confirm', async () => { showLoading(); try { await api.deleteStudent(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
+        function openConfigModal() { document.getElementById('configTarget').value = localState.system_config.target_amount || (localState.students.length * localState.system_config.fee_per_student); document.getElementById('configFee').value = localState.system_config.fee_per_student; document.getElementById('configModal').style.display = 'flex'; }
+        async function handleSaveConfig() { const t = parseInt(document.getElementById('configTarget').value), f = parseInt(document.getElementById('configFee').value); if (isNaN(t) || isNaN(f)) return showMessage('금액 오류'); closeModal('configModal'); showLoading(); try { await api.updateConfig(t, f); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
+        async function handleAddExpense() {
+            const dt = document.getElementById('expDate').value;
+            const ds = document.getElementById('expDesc').value.trim();
+            const am = parseInt(document.getElementById('expAmount').value, 10);
+            const receiptFile = document.getElementById('expReceipt').files[0];
+            if (!dt || !ds || isNaN(am)) return showMessage("날짜, 지출 항목, 금액을 모두 입력해주세요.");
+
+            showLoading();
+            try {
+                await api.insertExpense({ expense_date: dt, description: ds, amount: am, receipt_file: receiptFile });
+                document.getElementById('expDate').value = ''; document.getElementById('expDesc').value = ''; document.getElementById('expAmount').value = ''; document.getElementById('expReceipt').value = '';
+                document.getElementById('expReceiptName').textContent = '선택된 파일 없음';
+                await refreshDataAndUI();
+            } catch (e) { showMessage(e.message); } finally { hideLoading(); }
+        }
+        function handleDeleteExpense(id) { showMessage('삭제하시겠습니까?', 'confirm', async () => { showLoading(); try { await api.deleteExpense(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
+
+        // CRUD (신청)
+        document.getElementById('appForm').addEventListener('submit', async e => { e.preventDefault(); showLoading(); try { await api.insertApplication({ student_id: document.getElementById('appStudentId').value, name: document.getElementById('appName').value, item_name: document.getElementById('appItem').value }); document.getElementById('appItem').value = ""; await refreshDataAndUI(); showMessage('신청 완료!'); } catch (err) { hideLoading(); showMessage(err.message === "중복신청" ? "이미 신청하신 항목입니다." : "신청 실패"); } });
+        function handleDeleteApplication(id) { showMessage('신청을 취소하시겠습니까?', 'confirm', async () => { showLoading(); try { await api.deleteApplication(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
+        async function handleAddAppItem() { const name = document.getElementById('newAppItemName').value.trim(); if (!name) return showMessage('항목 이름을 입력하세요.'); showLoading(); try { await api.saveAppItem(name); document.getElementById('newAppItemName').value = ''; await refreshDataAndUI(); showMessage('신청 항목이 추가되었습니다.'); } catch (e) { hideLoading(); } }
+        function handleDeleteAppItem(id) { showMessage('이 항목을 삭제하시겠습니까?\n(기존 신청 내역은 유지됩니다)', 'confirm', async () => { showLoading(); try { await api.deleteAppItem(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
+
+        // CRUD (타이머, 타임라인, 업체)
+        function openTimerModal(id = null) { currentEditId = id; if (id) { const t = localState.timers.find(x => x.id === id); document.getElementById('timerTitle').value = t.title; document.getElementById('timerDeadline').value = t.deadline; document.getElementById('timerModalTitle').textContent = "타이머 수정"; } else { document.getElementById('timerTitle').value = ''; document.getElementById('timerDeadline').value = ''; document.getElementById('timerModalTitle').textContent = "타이머 추가"; } document.getElementById('timerModal').style.display = 'flex'; }
+        async function handleSaveTimer() { const t = document.getElementById('timerTitle').value, d = document.getElementById('timerDeadline').value; if (!t || !d) return showMessage('입력 오류'); closeModal('timerModal'); showLoading(); try { await api.saveTimer({ id: currentEditId, title: t, deadline: d }); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
+        function handleDeleteTimer(id) { showMessage('삭제하시겠습니까?', 'confirm', async () => { showLoading(); try { await api.deleteTimer(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
+        function openTimelineModal(id = null) { currentEditId = id; if (id) { const t = localState.timeline.find(x => x.id === id); document.getElementById('tlMonth').value = t.month; document.getElementById('tlText').value = t.text; document.getElementById('tlModalTitle').textContent = "일정 수정"; } else { document.getElementById('tlMonth').value = ''; document.getElementById('tlText').value = ''; document.getElementById('tlModalTitle').textContent = "일정 추가"; } document.getElementById('timelineModal').style.display = 'flex'; }
+        async function handleSaveTimeline() { const m = document.getElementById('tlMonth').value, t = document.getElementById('tlText').value; if (!m || !t) return showMessage('입력 오류'); closeModal('timelineModal'); showLoading(); try { await api.saveTimeline({ id: currentEditId, month: m, text: t }); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
+        function handleDeleteTimeline(id) { showMessage('삭제하시겠습니까?', 'confirm', async () => { showLoading(); try { await api.deleteTimeline(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
+        function openVendorModal(id = null) { currentEditId = id; if (id) { const v = localState.vendors.find(x => x.id === id); document.getElementById('vName').value = v.name; document.getElementById('vPhone').value = v.phone; document.getElementById('vItems').value = v.items; document.getElementById('vNote').value = v.note; document.getElementById('vendorModalTitle').textContent = "업체 수정"; } else { document.getElementById('vName').value = ''; document.getElementById('vPhone').value = ''; document.getElementById('vItems').value = ''; document.getElementById('vNote').value = ''; document.getElementById('vendorModalTitle').textContent = "업체 추가"; } document.getElementById('vendorModal').style.display = 'flex'; }
+        async function handleSaveVendor() { const n = document.getElementById('vName').value, p = document.getElementById('vPhone').value, i = document.getElementById('vItems').value, nt = document.getElementById('vNote').value; if (!n) return showMessage('업체명 필수'); closeModal('vendorModal'); showLoading(); try { await api.saveVendor({ id: currentEditId, name: n, phone: p, items: i, note: nt }); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
+        function handleDeleteVendor(id) { showMessage('업체를 삭제하시겠습니까?', 'confirm', async () => { showLoading(); try { await api.deleteVendor(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
+
+        // 기타 기능
+        function downloadExcel() { let csv = "\uFEFF", fn = ""; if (activePageId === 'page-students') { fn = "학생명단.csv"; csv += "학번,이름,연락처,입금상태\n"; localState.students.forEach(s => csv += `${s.student_id},${s.name},${s.phone},${s.payment_status}\n`); } else if (activePageId === 'page-settlement') { fn = "정산내역.csv"; csv += "날짜,내역,금액\n"; localState.expenses.forEach(e => csv += `${e.expense_date},"${e.description.replace(/"/g, '""')}",${e.amount}\n`); } else return; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' })); a.download = fn; a.click(); }
+        document.getElementById('studentSearch').addEventListener('input', e => document.querySelectorAll('#studentTableBody tr').forEach(r => r.style.display = r.textContent.toLowerCase().includes(e.target.value.toLowerCase()) ? '' : 'none'));
+        document.getElementById('vendorSearch').addEventListener('input', e => document.querySelectorAll('#vendorTableBody tr').forEach(r => r.style.display = r.textContent.toLowerCase().includes(e.target.value.toLowerCase()) ? '' : 'none'));
+
+        window.onload = () => document.getElementById('expDate').value = new Date().toISOString().split('T')[0];
+        window.onclick = e => { if (e.target.classList.contains('modal-overlay')) e.target.style.display = 'none'; };
+    </script>
+</body>
+
+</html>
+<!-- Re-deploy with correct author -->
+
