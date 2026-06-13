@@ -1037,9 +1037,9 @@
                     <p style="text-align: center; color: var(--text-gray); margin-bottom: 2rem;">정보를 정확하게 입력해 주세요.</p>
                     <form id="appForm">
                         <label style="font-weight: 600; display:block; margin-bottom: 0.5rem;">학번</label>
-                        <input type="text" id="appStudentId" class="app-form-control" readonly>
+                        <input type="text" id="appStudentId" class="app-form-control" required>
                         <label style="font-weight: 600; display:block; margin-bottom: 0.5rem;">이름</label>
-                        <input type="text" id="appName" class="app-form-control" readonly>
+                        <input type="text" id="appName" class="app-form-control" required>
                         <label style="font-weight: 600; display:block; margin-bottom: 0.5rem;">신청 항목</label>
                         <!-- 드롭다운 메뉴가 JS를 통해 DB값으로 채워집니다 -->
                         <select id="appItem" class="app-form-control" required></select>
@@ -1367,8 +1367,8 @@
             try {
                 currentUser = await api.login(id, pw);
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                if (currentUser.role === 'admin') { document.body.classList.add('admin-mode'); document.getElementById('headerUserBadge').textContent = '관리자'; document.getElementById('headerUserBadge').classList.add('admin-badge'); document.getElementById('appTableTitle').textContent = '전체 학생 신청 내역 (관리자용)'; }
-                else { document.body.classList.remove('admin-mode'); document.getElementById('headerUserBadge').textContent = '학생'; document.getElementById('headerUserBadge').classList.remove('admin-badge'); document.getElementById('appTableTitle').textContent = '나의 신청 내역 조회'; document.getElementById('appStudentId').value = currentUser.student_id || currentUser.user_id; document.getElementById('appName').value = currentUser.name; }
+                if (currentUser.role === 'admin') { document.body.classList.add('admin-mode'); document.getElementById('headerUserBadge').textContent = '관리자'; document.getElementById('headerUserBadge').classList.add('admin-badge'); document.getElementById('appTableTitle').textContent = '전체 학생 신청 내역 (관리자용)'; document.getElementById('appStudentId').readOnly = false; document.getElementById('appName').readOnly = false; }
+                else { document.body.classList.remove('admin-mode'); document.getElementById('headerUserBadge').textContent = '학생'; document.getElementById('headerUserBadge').classList.remove('admin-badge'); document.getElementById('appTableTitle').textContent = '나의 신청 내역 조회'; document.getElementById('appStudentId').readOnly = true; document.getElementById('appName').readOnly = true; document.getElementById('appStudentId').value = currentUser.student_id || currentUser.user_id; document.getElementById('appName').value = currentUser.name; }
                 document.getElementById('headerUserName').textContent = currentUser.name + '님'; document.getElementById('loginPage').style.display = 'none'; document.getElementById('appContainer').style.display = 'flex';
                 await refreshDataAndUI();
             } catch (err) { hideLoading(); showMessage(err.message); }
@@ -1473,8 +1473,8 @@
             if (currentUser) {
                 document.getElementById('loginPage').style.display = 'none';
                 document.getElementById('appContainer').style.display = 'flex';
-                if (currentUser.role === 'admin') { document.body.classList.add('admin-mode'); document.getElementById('headerUserBadge').textContent = '관리자'; document.getElementById('headerUserBadge').classList.add('admin-badge'); document.getElementById('appTableTitle').textContent = '전체 학생 신청 내역 (관리자용)'; }
-                else { document.body.classList.remove('admin-mode'); document.getElementById('headerUserBadge').textContent = '학생'; document.getElementById('headerUserBadge').classList.remove('admin-badge'); document.getElementById('appTableTitle').textContent = '나의 신청 내역 조회'; document.getElementById('appStudentId').value = currentUser.student_id || currentUser.user_id; document.getElementById('appName').value = currentUser.name; }
+                if (currentUser.role === 'admin') { document.body.classList.add('admin-mode'); document.getElementById('headerUserBadge').textContent = '관리자'; document.getElementById('headerUserBadge').classList.add('admin-badge'); document.getElementById('appTableTitle').textContent = '전체 학생 신청 내역 (관리자용)'; document.getElementById('appStudentId').readOnly = false; document.getElementById('appName').readOnly = false; }
+                else { document.body.classList.remove('admin-mode'); document.getElementById('headerUserBadge').textContent = '학생'; document.getElementById('headerUserBadge').classList.remove('admin-badge'); document.getElementById('appTableTitle').textContent = '나의 신청 내역 조회'; document.getElementById('appStudentId').readOnly = true; document.getElementById('appName').readOnly = true; document.getElementById('appStudentId').value = currentUser.student_id || currentUser.user_id; document.getElementById('appName').value = currentUser.name; }
                 document.getElementById('headerUserName').textContent = currentUser.name + '님';
                 showLoading();
                 try { await refreshDataAndUI(); } catch(e) {}
