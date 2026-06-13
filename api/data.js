@@ -36,6 +36,6 @@ module.exports = async function handler(req, res) {
         res.status(200).json(data);
     } catch (error) {
         console.error("Data Fetch Error:", error);
-        res.status(500).json({ message: '서버 에러가 발생했습니다.' });
+        res.status(500).json({ message: '서버 에러가 발생했습니다.', error: error.message, code: error.code });
     }
 }
