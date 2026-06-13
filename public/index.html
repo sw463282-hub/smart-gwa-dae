@@ -1,10 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ko">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Smart Gwa-dae - ?숆낵 ?꾩궛 愿由??쒖뒪??/title>
+    <title>Smart Gwa-dae - 학과 전산 관리 시스템</title>
     <style>
         :root {
             --primary-navy: #1B2A47;
@@ -33,7 +33,7 @@
             overflow-x: hidden;
         }
 
-        /* 濡쒓렇???붾㈃ */
+        /* 로그인 화면 */
         #loginPage {
             position: fixed;
             top: 0;
@@ -128,7 +128,7 @@
             line-height: 1.5;
         }
 
-        /* 硫붿씤 ?덉씠?꾩썐 & ?ъ씠?쒕컮 */
+        /* 메인 레이아웃 & 사이드바 */
         #appContainer {
             display: none;
             min-height: 100vh;
@@ -177,7 +177,7 @@
             padding-left: calc(1.5rem - 5px);
         }
 
-        /* ?ㅻ뜑 */
+        /* 헤더 */
         .main-content {
             flex: 1;
             display: flex;
@@ -260,12 +260,12 @@
             cursor: pointer;
         }
 
-        /* 沅뚰븳 ?쒖뼱 ?듭떖 CSS (?숈깮 紐⑤뱶????愿由ъ옄???④?) */
+        /* 권한 제어 핵심 CSS (학생 모드일 때 관리자용 숨김) */
         body:not(.admin-mode) .admin-only {
             display: none !important;
         }
 
-        /* ?섏씠吏 ?좊땲硫붿씠??*/
+        /* 페이지 애니메이션 */
         .page-section {
             padding: 2.5rem;
             display: none;
@@ -288,7 +288,7 @@
             }
         }
 
-        /* 移대뱶 諛??뚯씠釉?怨듯넻 */
+        /* 카드 및 테이블 공통 */
         .dashboard-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -438,7 +438,7 @@
             border-color: var(--accent-red);
         }
 
-        /* ?뺤궛 ?댁뿭 ?붿빟 & 諛?*/
+        /* 정산 내역 요약 & 바 */
         .settlement-summary {
             display: flex;
             gap: 1rem;
@@ -492,7 +492,7 @@
             transition: width 1s ease;
         }
 
-        /* ?좎껌 ??*/
+        /* 신청 폼 */
         .form-row {
             display: flex;
             gap: 1rem;
@@ -545,7 +545,7 @@
             cursor: pointer;
         }
 
-        /* 留ㅻ돱????諛???꾨씪??*/
+        /* 매뉴얼 탭 및 타임라인 */
         .tab-menu {
             display: flex;
             border-bottom: 2px solid #E0E6ED;
@@ -660,7 +660,7 @@
             white-space: pre-wrap;
         }
 
-        /* ??대㉧ 而댄룷?뚰듃 */
+        /* 타이머 컴포넌트 */
         .timer-card {
             background: linear-gradient(135deg, #2C3E50, #3498DB);
             color: white;
@@ -691,7 +691,7 @@
             background: linear-gradient(135deg, #7F8C8D, #95A5A6);
         }
 
-        /* 紐⑤떖 ?쒖뒪??*/
+        /* 모달 시스템 */
         .modal-overlay {
             display: none;
             position: fixed;
@@ -819,105 +819,105 @@
 
 <body>
 
-    <!-- 0. 濡쒓렇???섏씠吏 -->
+    <!-- 0. 로그인 페이지 -->
     <div id="loginPage">
         <div class="login-card">
             <h1>Smart Gwa-dae</h1>
-            <p>?숆낵 ?꾩궛 愿由??쒖뒪??/p>
+            <p>학과 전산 관리 시스템</p>
             <form id="loginForm">
-                <input type="text" id="loginId" class="login-input" placeholder="?꾩씠??(?숇쾲 ?먮뒗 admin)" required>
-                <input type="password" id="loginPw" class="login-input" placeholder="鍮꾨?踰덊샇" required>
-                <button type="submit" class="btn-login">濡쒓렇??/button>
-                <button type="button" class="btn-signup" onclick="openSignupModal()">?뚯썝媛??/button>
+                <input type="text" id="loginId" class="login-input" placeholder="아이디 (학번 또는 admin)" required>
+                <input type="password" id="loginPw" class="login-input" placeholder="비밀번호" required>
+                <button type="submit" class="btn-login">로그인</button>
+                <button type="button" class="btn-signup" onclick="openSignupModal()">회원가입</button>
             </form>
             <div class="test-accounts">
-                <strong>[?뚯뒪??怨꾩젙]</strong><br>
-                ?몣 愿由ъ옄: <code>admin</code> / <code>1234</code><br>
-                ?럳 ?숈깮: <code>20240001</code> / <code>1234</code>
+                <strong>[테스트 계정]</strong><br>
+                👑 관리자: <code>admin</code> / <code>1234</code><br>
+                🎓 학생: <code>20240001</code> / <code>1234</code>
             </div>
         </div>
     </div>
 
-    <!-- 硫붿씤 ??而⑦뀒?대꼫 -->
+    <!-- 메인 앱 컨테이너 -->
     <div id="appContainer">
         <aside class="sidebar" id="sidebar">
             <div class="sidebar-brand">Smart Gwa-dae</div>
             <ul class="sidebar-menu">
-                <li class="nav-item active" data-target="page-dashboard">?뱤 ??쒕낫??/li>
-                <li class="nav-item" data-target="page-students">?쭛?랅윃??숈깮 紐낅떒</li>
-                <li class="nav-item" data-target="page-settlement">?뮥 ?뺤궛 ?댁뿭</li>
-                <li class="nav-item" data-target="page-application">?뱷 ?됱궗 ?좎껌</li>
-                <li class="nav-item" data-target="page-manual">?뱚 ?낅Т 留ㅻ돱??/li>
+                <li class="nav-item active" data-target="page-dashboard">📊 대시보드</li>
+                <li class="nav-item" data-target="page-students">🧑‍🎓 학생 명단</li>
+                <li class="nav-item" data-target="page-settlement">💰 정산 내역</li>
+                <li class="nav-item" data-target="page-application">📝 행사 신청</li>
+                <li class="nav-item" data-target="page-manual">📁 업무 매뉴얼</li>
             </ul>
         </aside>
 
         <main class="main-content">
             <header class="top-header">
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    <button class="mobile-menu-btn" onclick="toggleSidebar()">??/button>
-                    <h1 class="page-title" id="mainTitle">??쒕낫??/h1>
+                    <button class="mobile-menu-btn" onclick="toggleSidebar()">☰</button>
+                    <h1 class="page-title" id="mainTitle">대시보드</h1>
                 </div>
                 <div class="header-actions">
-                    <button class="btn-excel" id="btnExcel" onclick="downloadExcel()">?묒? ?ㅼ슫濡쒕뱶</button>
+                    <button class="btn-excel" id="btnExcel" onclick="downloadExcel()">엑셀 다운로드</button>
                     <div class="user-info">
-                        <span id="headerUserBadge" class="user-role-badge">?숈깮</span>
-                        <span id="headerUserName" class="name-text">?ъ슜??/span>
+                        <span id="headerUserBadge" class="user-role-badge">학생</span>
+                        <span id="headerUserName" class="name-text">사용자</span>
                     </div>
-                    <button class="btn-logout" onclick="handleLogout()">濡쒓렇?꾩썐</button>
+                    <button class="btn-logout" onclick="handleLogout()">로그아웃</button>
                 </div>
             </header>
 
-            <!-- 1. ??쒕낫??-->
+            <!-- 1. 대시보드 -->
             <section class="page-section active" id="page-dashboard">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-                    <h3 style="color: var(--text-dark);">???좎껌 留덇컧 ??대㉧</h3>
-                    <button class="btn-primary admin-only" onclick="openTimerModal()">+ ??대㉧ 異붽?</button>
+                    <h3 style="color: var(--text-dark);">⏳ 신청 마감 타이머</h3>
+                    <button class="btn-primary admin-only" onclick="openTimerModal()">+ 타이머 추가</button>
                 </div>
                 <div class="dashboard-cards" id="timerCardsContainer">
-                    <!-- ??대㉧ ?뚮뜑留?-->
+                    <!-- 타이머 렌더링 -->
                 </div>
 
-                <h3 style="color: var(--text-dark); margin-bottom: 1rem;">?뱢 ?숆낵 ?붿빟 ?꾪솴</h3>
+                <h3 style="color: var(--text-dark); margin-bottom: 1rem;">📈 학과 요약 현황</h3>
                 <div class="dashboard-cards">
                     <div class="card">
-                        <div class="card-title">紐⑺몴 ?섍툑??(怨쇰퉬)</div>
-                        <div class="card-value" id="dashTarget">0 ??/div>
-                        <div class="card-subtext">1?몃떦 <span id="dashFeeAmt">0</span>??湲곗?</div>
+                        <div class="card-title">목표 수금액 (과비)</div>
+                        <div class="card-value" id="dashTarget">0 원</div>
+                        <div class="card-subtext">1인당 <span id="dashFeeAmt">0</span>원 기준</div>
                     </div>
                     <div class="card">
-                        <div class="card-title">?꾩옱 ?낃툑??/div>
-                        <div class="card-value text-blue" id="dashDeposited">0 ??/div>
-                        <div class="card-subtext" id="dashDepositRate">?ъ꽦瑜? 0%</div>
+                        <div class="card-title">현재 입금액</div>
+                        <div class="card-value text-blue" id="dashDeposited">0 원</div>
+                        <div class="card-subtext" id="dashDepositRate">달성률: 0%</div>
                     </div>
                     <div class="card">
-                        <div class="card-title">?꾩옱 ?붿븸</div>
-                        <div class="card-value text-green" id="dashBalance">0 ??/div>
-                        <div class="card-subtext" id="dashExpense">珥?吏異? 0 ??/div>
+                        <div class="card-title">현재 잔액</div>
+                        <div class="card-value text-green" id="dashBalance">0 원</div>
+                        <div class="card-subtext" id="dashExpense">총 지출: 0 원</div>
                     </div>
                     <div class="card admin-only">
-                        <div class="card-title">誘몄쿂由??낅Т (誘몄엯湲덉옄)</div>
-                        <div class="card-value text-red" id="dashPending">0 紐?/div>
-                        <div class="card-subtext" id="dashPendingSub">?낃툑 ?낅젮媛 ?꾩슂?⑸땲??</div>
+                        <div class="card-title">미처리 업무 (미입금자)</div>
+                        <div class="card-value text-red" id="dashPending">0 명</div>
+                        <div class="card-subtext" id="dashPendingSub">입금 독려가 필요합니다.</div>
                     </div>
                 </div>
             </section>
 
-            <!-- 2. ?숈깮 紐낅떒 -->
+            <!-- 2. 학생 명단 -->
             <section class="page-section" id="page-students">
                 <div class="content-box">
                     <div class="action-bar">
-                        <input type="text" class="search-box" id="studentSearch" placeholder="?대쫫 ?먮뒗 ?숇쾲?쇰줈 寃??..">
-                        <button class="btn-primary admin-only" onclick="openAddStudentModal()">+ ?숈깮 異붽?</button>
+                        <input type="text" class="search-box" id="studentSearch" placeholder="이름 또는 학번으로 검색...">
+                        <button class="btn-primary admin-only" onclick="openAddStudentModal()">+ 학생 추가</button>
                     </div>
                     <div style="overflow-x: auto;">
                         <table id="studentTable">
                             <thead>
                                 <tr>
-                                    <th>?숇쾲</th>
-                                    <th>?대쫫</th>
-                                    <th>?곕씫泥?/th>
-                                    <th>?낃툑 ?곹깭</th>
-                                    <th class="admin-only" style="text-align: center;">愿由?/th>
+                                    <th>학번</th>
+                                    <th>이름</th>
+                                    <th>연락처</th>
+                                    <th>입금 상태</th>
+                                    <th class="admin-only" style="text-align: center;">관리</th>
                                 </tr>
                             </thead>
                             <tbody id="studentTableBody"></tbody>
@@ -926,28 +926,28 @@
                 </div>
             </section>
 
-            <!-- 3. ?뺤궛 ?댁뿭 -->
+            <!-- 3. 정산 내역 -->
             <section class="page-section" id="page-settlement">
                 <div class="content-box">
-                    <h3 style="margin-bottom: 1rem; color: var(--text-dark);">?뮯 怨듦툑 ?뺤궛 ?붿빟</h3>
+                    <h3 style="margin-bottom: 1rem; color: var(--text-dark);">💸 공금 정산 요약</h3>
                     <div class="settlement-summary">
                         <div class="summary-item">
-                            <div class="summary-label">珥?紐④툑??/div>
-                            <div class="summary-amount text-blue" id="settleTotalIncome">0 ??/div>
+                            <div class="summary-label">총 모금액</div>
+                            <div class="summary-amount text-blue" id="settleTotalIncome">0 원</div>
                         </div>
                         <div class="summary-item">
-                            <div class="summary-label">珥?吏異쒖븸</div>
-                            <div class="summary-amount text-red" id="settleTotalExpense">0 ??/div>
+                            <div class="summary-label">총 지출액</div>
+                            <div class="summary-amount text-red" id="settleTotalExpense">0 원</div>
                         </div>
                         <div class="summary-item" style="background-color: #EAFAF1; border-color: #A9DFBF;">
-                            <div class="summary-label">?꾩옱 ?붿븸</div>
-                            <div class="summary-amount text-green" id="settleBalance">0 ??/div>
+                            <div class="summary-label">현재 잔액</div>
+                            <div class="summary-amount text-green" id="settleBalance">0 원</div>
                         </div>
                     </div>
                     <div class="progress-header">
-                        <span>紐⑺몴 ?ъ꽦瑜?<button class="btn-edit admin-only"
-                                style="margin-left:10px; padding:0.2rem 0.6rem;" onclick="openConfigModal()">?숋툘 紐⑺몴
-                                ?ㅼ젙</button></span>
+                        <span>목표 달성률 <button class="btn-edit admin-only"
+                                style="margin-left:10px; padding:0.2rem 0.6rem;" onclick="openConfigModal()">⚙️ 목표
+                                설정</button></span>
                         <span id="settlementProgressText">0%</span>
                     </div>
                     <div class="progress-container">
@@ -956,25 +956,25 @@
                 </div>
 
                 <div class="content-box admin-only">
-                    <h3 style="margin-bottom: 1rem;">?덈줈??吏異??낅젰</h3>
+                    <h3 style="margin-bottom: 1rem;">새로운 지출 입력</h3>
                     <div class="form-row">
-                        <div class="form-group"><label>?좎쭨</label><input type="date" id="expDate" class="form-control">
+                        <div class="form-group"><label>날짜</label><input type="date" id="expDate" class="form-control">
                         </div>
-                        <div class="form-group" style="flex: 2;"><label>吏異???ぉ</label><input type="text" id="expDesc"
-                                class="form-control" placeholder="?? 媛쒓컯珥앺쉶 ?ㅺ낵"></div>
-                        <div class="form-group"><label>湲덉븸 (??</label><input type="number" id="expAmount"
+                        <div class="form-group" style="flex: 2;"><label>지출 항목</label><input type="text" id="expDesc"
+                                class="form-control" placeholder="예: 개강총회 다과"></div>
+                        <div class="form-group"><label>금액 (원)</label><input type="number" id="expAmount"
                                 class="form-control" placeholder="0"></div>
-                        <button class="btn-primary" onclick="handleAddExpense()" style="height: 45px;">吏異?異붽??섍린</button>
+                        <button class="btn-primary" onclick="handleAddExpense()" style="height: 45px;">지출 추가하기</button>
                     </div>
                 </div>
                 <div class="content-box" style="overflow-x: auto;">
                     <table id="expenseTable">
                         <thead>
                             <tr>
-                                <th>?좎쭨</th>
-                                <th>吏異???ぉ</th>
-                                <th style="text-align: right;">湲덉븸</th>
-                                <th class="admin-only" style="text-align: center;">愿由?/th>
+                                <th>날짜</th>
+                                <th>지출 항목</th>
+                                <th style="text-align: right;">금액</th>
+                                <th class="admin-only" style="text-align: center;">관리</th>
                             </tr>
                         </thead>
                         <tbody id="expenseTableBody"></tbody>
@@ -982,37 +982,37 @@
                 </div>
             </section>
 
-            <!-- 4. ?됱궗 ?좎껌 -->
+            <!-- 4. 행사 신청 -->
             <section class="page-section" id="page-application">
                 <div class="content-box app-form-wrapper">
-                    <h2 style="text-align: center; margin-bottom: 0.5rem;">?됱궗 諛?怨듬룞援щℓ ?좎껌</h2>
-                    <p style="text-align: center; color: var(--text-gray); margin-bottom: 2rem;">?뺣낫瑜??뺥솗?섍쾶 ?낅젰??二쇱꽭??</p>
+                    <h2 style="text-align: center; margin-bottom: 0.5rem;">행사 및 공동구매 신청</h2>
+                    <p style="text-align: center; color: var(--text-gray); margin-bottom: 2rem;">정보를 정확하게 입력해 주세요.</p>
                     <form id="appForm">
-                        <label style="font-weight: 600; display:block; margin-bottom: 0.5rem;">?숇쾲</label>
+                        <label style="font-weight: 600; display:block; margin-bottom: 0.5rem;">학번</label>
                         <input type="text" id="appStudentId" class="app-form-control" readonly>
-                        <label style="font-weight: 600; display:block; margin-bottom: 0.5rem;">?대쫫</label>
+                        <label style="font-weight: 600; display:block; margin-bottom: 0.5rem;">이름</label>
                         <input type="text" id="appName" class="app-form-control" readonly>
-                        <label style="font-weight: 600; display:block; margin-bottom: 0.5rem;">?좎껌 ??ぉ</label>
-                        <!-- ?쒕∼?ㅼ슫 硫붾돱媛 JS瑜??듯빐 DB媛믪쑝濡?梨꾩썙吏묐땲??-->
+                        <label style="font-weight: 600; display:block; margin-bottom: 0.5rem;">신청 항목</label>
+                        <!-- 드롭다운 메뉴가 JS를 통해 DB값으로 채워집니다 -->
                         <select id="appItem" class="app-form-control" required></select>
-                        <button type="submit" class="btn-submit">?좎껌?섍린</button>
+                        <button type="submit" class="btn-submit">신청하기</button>
                     </form>
                 </div>
 
-                <!-- [?좉퇋 湲곕뒫] ?좎껌 ??ぉ 愿由?(愿由ъ옄 ?꾩슜) -->
+                <!-- [신규 기능] 신청 항목 관리 (관리자 전용) -->
                 <div class="content-box admin-only">
-                    <h3 style="margin-bottom: 1rem; color: var(--text-dark);">?숋툘 ?좎껌 ??ぉ ?ㅼ젙 (愿由ъ옄 ?꾩슜)</h3>
+                    <h3 style="margin-bottom: 1rem; color: var(--text-dark);">⚙️ 신청 항목 설정 (관리자 전용)</h3>
                     <div class="action-bar">
                         <input type="text" id="newAppItemName" class="form-control" style="flex: 1;"
-                            placeholder="?덈줈???좎껌 ??ぉ ?대쫫 ?낅젰 (?? 2?숆린 ?쇱떇?ъ뾽 ?좎껌)">
-                        <button class="btn-primary" onclick="handleAddAppItem()">??ぉ 異붽?</button>
+                            placeholder="새로운 신청 항목 이름 입력 (예: 2학기 야식사업 신청)">
+                        <button class="btn-primary" onclick="handleAddAppItem()">항목 추가</button>
                     </div>
                     <div style="overflow-x: auto; margin-top: 10px;">
                         <table id="appItemTable">
                             <thead>
                                 <tr>
-                                    <th>?좎껌 ??ぉ ?대쫫</th>
-                                    <th style="text-align: center; width: 100px;">愿由?/th>
+                                    <th>신청 항목 이름</th>
+                                    <th style="text-align: center; width: 100px;">관리</th>
                                 </tr>
                             </thead>
                             <tbody id="appItemTableBody"></tbody>
@@ -1021,16 +1021,16 @@
                 </div>
 
                 <div class="content-box">
-                    <h3 style="margin-bottom: 1rem; color: var(--text-dark);" id="appTableTitle">?섏쓽 ?좎껌 ?댁뿭</h3>
+                    <h3 style="margin-bottom: 1rem; color: var(--text-dark);" id="appTableTitle">나의 신청 내역</h3>
                     <div style="overflow-x: auto;">
                         <table id="applicationTable">
                             <thead>
                                 <tr>
-                                    <th>?좎껌?쇱떆</th>
-                                    <th>?숇쾲</th>
-                                    <th>?대쫫</th>
-                                    <th>?좎껌 ??ぉ</th>
-                                    <th style="text-align: center;">愿由?(痍⑥냼)</th>
+                                    <th>신청일시</th>
+                                    <th>학번</th>
+                                    <th>이름</th>
+                                    <th>신청 항목</th>
+                                    <th style="text-align: center;">관리 (취소)</th>
                                 </tr>
                             </thead>
                             <tbody id="applicationTableBody"></tbody>
@@ -1039,39 +1039,39 @@
                 </div>
             </section>
 
-            <!-- 5. ?낅Т 留ㅻ돱??-->
+            <!-- 5. 업무 매뉴얼 -->
             <section class="page-section" id="page-manual">
                 <div class="content-box">
                     <div class="tab-menu">
-                        <button class="tab-btn active" onclick="openTab('tab-timeline', this)">?뱟 ?곌컙 ?ㅼ?以?/button>
-                        <button class="tab-btn" onclick="openTab('tab-vendor', this)">?뱸 ?낆껜 諛??곕씫泥?/button>
-                        <button class="tab-btn" onclick="openTab('tab-guide', this)">?뮕 ?댁쁺 媛?대뱶</button>
+                        <button class="tab-btn active" onclick="openTab('tab-timeline', this)">📅 연간 스케줄</button>
+                        <button class="tab-btn" onclick="openTab('tab-vendor', this)">📞 업체 및 연락처</button>
+                        <button class="tab-btn" onclick="openTab('tab-guide', this)">💡 운영 가이드</button>
                     </div>
 
-                    <!-- ??1: ?ㅼ?以?-->
+                    <!-- 탭 1: 스케줄 -->
                     <div id="tab-timeline" class="tab-content active">
                         <div class="action-bar">
-                            <h3 style="color: var(--text-dark);">二쇱슂 ?숈궗 諛??됱궗 ?쇱젙</h3>
-                            <button class="btn-primary admin-only" onclick="openTimelineModal()">+ ?쇱젙 異붽?</button>
+                            <h3 style="color: var(--text-dark);">주요 학사 및 행사 일정</h3>
+                            <button class="btn-primary admin-only" onclick="openTimelineModal()">+ 일정 추가</button>
                         </div>
                         <div class="timeline" id="timelineContainer"></div>
                     </div>
 
-                    <!-- ??2: ?낆껜 -->
+                    <!-- 탭 2: 업체 -->
                     <div id="tab-vendor" class="tab-content">
                         <div class="action-bar">
-                            <input type="text" id="vendorSearch" class="search-box" placeholder="?낆껜紐??먮뒗 ?덈ぉ 寃??..">
-                            <button class="btn-primary admin-only" onclick="openVendorModal()">+ ?낆껜 異붽?</button>
+                            <input type="text" id="vendorSearch" class="search-box" placeholder="업체명 또는 품목 검색...">
+                            <button class="btn-primary admin-only" onclick="openVendorModal()">+ 업체 추가</button>
                         </div>
                         <div style="overflow-x: auto;">
                             <table>
                                 <thead>
                                     <tr>
-                                        <th>?낆껜紐?/th>
-                                        <th>?곕씫泥?/th>
-                                        <th>二쇱슂 ?덈ぉ</th>
-                                        <th>硫붾え</th>
-                                        <th class="admin-only" style="text-align:center;">愿由?/th>
+                                        <th>업체명</th>
+                                        <th>연락처</th>
+                                        <th>주요 품목</th>
+                                        <th>메모</th>
+                                        <th class="admin-only" style="text-align:center;">관리</th>
                                     </tr>
                                 </thead>
                                 <tbody id="vendorTableBody"></tbody>
@@ -1079,19 +1079,19 @@
                         </div>
                     </div>
 
-                    <!-- ??3: 媛?대뱶 -->
+                    <!-- 탭 3: 가이드 -->
                     <div id="tab-guide" class="tab-content">
                         <div class="action-bar" style="margin-bottom: 1rem;">
-                            <h3 style="color: var(--text-dark);">?몄닔?멸퀎 媛?대뱶?쇱씤</h3>
-                            <button class="btn-primary admin-only" id="btnEditGuide" onclick="toggleGuideEdit()">媛?대뱶
-                                ?섏젙?섍린</button>
+                            <h3 style="color: var(--text-dark);">인수인계 가이드라인</h3>
+                            <button class="btn-primary admin-only" id="btnEditGuide" onclick="toggleGuideEdit()">가이드
+                                수정하기</button>
                         </div>
                         <div id="guideDisplay"></div>
                         <div id="guideEditArea" class="admin-only" style="display: none;">
                             <textarea id="guideEditor"></textarea>
                             <div style="text-align: right; margin-top: 10px;">
-                                <button class="btn-cancel" onclick="toggleGuideEdit()">痍⑥냼</button>
-                                <button class="btn-confirm" onclick="saveGuide()">??ν븯湲?/button>
+                                <button class="btn-cancel" onclick="toggleGuideEdit()">취소</button>
+                                <button class="btn-confirm" onclick="saveGuide()">저장하기</button>
                             </div>
                         </div>
                     </div>
@@ -1100,10 +1100,10 @@
         </main>
     </div>
 
-    <!-- 濡쒕뵫 諛??뚮┝ 紐⑤떖 -->
+    <!-- 로딩 및 알림 모달 -->
     <div class="loading-overlay" id="loadingOverlay">
         <div class="spinner"></div>
-        <div class="loading-text">?쒕쾭 ?듭떊 以?..</div>
+        <div class="loading-text">서버 통신 중...</div>
     </div>
     <div class="modal-overlay" id="msgModal" style="z-index: 10002;">
         <div class="modal-content" style="text-align: center;">
@@ -1112,119 +1112,119 @@
         </div>
     </div>
 
-    <!-- 媛곸쥌 ?섏젙??紐⑤떖??-->
+    <!-- 각종 수정용 모달들 -->
     <div class="modal-overlay" id="editStudentModal">
         <div class="modal-content">
-            <h2 class="modal-title">?낃툑 ?곹깭 蹂寃?/h2>
+            <h2 class="modal-title">입금 상태 변경</h2>
             <p id="editStudentName" style="font-weight: bold; margin-bottom: 1rem;"></p><select id="editStudentStatus"
                 class="app-form-control">
-                <option value="誘몄엯湲?>誘몄엯湲?/option>
-                <option value="?뺤씤以?>?뺤씤以?/option>
-                <option value="?꾨즺">?꾨즺</option>
+                <option value="미입금">미입금</option>
+                <option value="확인중">확인중</option>
+                <option value="완료">완료</option>
             </select>
             <div class="modal-actions"><button class="btn-cancel"
-                    onclick="closeModal('editStudentModal')">痍⑥냼</button><button class="btn-confirm"
-                    onclick="handleSaveStudentStatus()">???/button></div>
+                    onclick="closeModal('editStudentModal')">취소</button><button class="btn-confirm"
+                    onclick="handleSaveStudentStatus()">저장</button></div>
         </div>
     </div>
     <div class="modal-overlay" id="addStudentModal">
         <div class="modal-content">
-            <h2 class="modal-title">?숈깮 異붽?</h2><input type="text" id="addStdId" class="app-form-control"
-                placeholder="?숇쾲"><input type="text" id="addStdName" class="app-form-control" placeholder="?대쫫"><input
-                type="text" id="addStdPhone" class="app-form-control" placeholder="?곕씫泥?>
+            <h2 class="modal-title">학생 추가</h2><input type="text" id="addStdId" class="app-form-control"
+                placeholder="학번"><input type="text" id="addStdName" class="app-form-control" placeholder="이름"><input
+                type="text" id="addStdPhone" class="app-form-control" placeholder="연락처">
             <div class="modal-actions"><button class="btn-cancel"
-                    onclick="closeModal('addStudentModal')">痍⑥냼</button><button class="btn-confirm"
-                    onclick="handleAddStudent()">異붽?</button></div>
+                    onclick="closeModal('addStudentModal')">취소</button><button class="btn-confirm"
+                    onclick="handleAddStudent()">추가</button></div>
         </div>
     </div>
     <div class="modal-overlay" id="signupModal">
         <div class="modal-content">
-            <h2 class="modal-title">?뚯썝媛??/h2>
+            <h2 class="modal-title">회원가입</h2>
             <div style="display:flex;gap:10px;margin-bottom:1.5rem;"><input type="text" id="signupId"
-                    class="app-form-control" placeholder="?꾩씠?? style="margin-bottom:0;flex:1;"
+                    class="app-form-control" placeholder="아이디" style="margin-bottom:0;flex:1;"
                     oninput="window.isIdChecked=false"><button class="btn-primary" type="button"
-                    style="white-space:nowrap;padding:0 1rem;height:auto;" onclick="checkDuplicateId()">以묐났?뺤씤</button>
-            </div><input type="password" id="signupPw" class="app-form-control" placeholder="鍮꾨?踰덊샇"><input type="text"
-                id="signupName" class="app-form-control" placeholder="?대쫫"><input type="text" id="signupStdId"
-                class="app-form-control" placeholder="?숇쾲"><input type="text" id="signupPhone" class="app-form-control"
-                placeholder="?꾪솕踰덊샇">
+                    style="white-space:nowrap;padding:0 1rem;height:auto;" onclick="checkDuplicateId()">중복확인</button>
+            </div><input type="password" id="signupPw" class="app-form-control" placeholder="비밀번호"><input type="text"
+                id="signupName" class="app-form-control" placeholder="이름"><input type="text" id="signupStdId"
+                class="app-form-control" placeholder="학번"><input type="text" id="signupPhone" class="app-form-control"
+                placeholder="전화번호">
             <div class="modal-actions" style="justify-content:flex-start;gap:10px;"><button class="btn-confirm"
-                    onclick="handleSignup()">?뚯썝媛???꾨즺</button><button class="btn-cancel"
-                    onclick="closeModal('signupModal')" style="margin-left:auto;">痍⑥냼</button></div>
+                    onclick="handleSignup()">회원가입 완료</button><button class="btn-cancel"
+                    onclick="closeModal('signupModal')" style="margin-left:auto;">취소</button></div>
         </div>
     </div>
     <div class="modal-overlay" id="configModal">
         <div class="modal-content">
-            <h2 class="modal-title">?뺤궛 紐⑺몴 ?ㅼ젙</h2><label>珥?紐⑺몴 湲덉븸</label><input type="number" id="configTarget"
-                class="app-form-control"><label>1?몃떦 湲곗? 怨쇰퉬</label><input type="number" id="configFee"
+            <h2 class="modal-title">정산 목표 설정</h2><label>총 목표 금액</label><input type="number" id="configTarget"
+                class="app-form-control"><label>1인당 기준 과비</label><input type="number" id="configFee"
                 class="app-form-control">
-            <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('configModal')">痍⑥냼</button><button
-                    class="btn-confirm" onclick="handleSaveConfig()">???/button></div>
+            <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('configModal')">취소</button><button
+                    class="btn-confirm" onclick="handleSaveConfig()">저장</button></div>
         </div>
     </div>
     <div class="modal-overlay" id="timerModal">
         <div class="modal-content">
-            <h2 class="modal-title" id="timerModalTitle">??대㉧ ?ㅼ젙</h2><label>??ぉ ?대쫫</label><input type="text"
-                id="timerTitle" class="app-form-control" placeholder="?? 怨쇰났 ?좎껌 留덇컧"><label>留덇컧 ?쇱떆</label><input
+            <h2 class="modal-title" id="timerModalTitle">타이머 설정</h2><label>항목 이름</label><input type="text"
+                id="timerTitle" class="app-form-control" placeholder="예: 과복 신청 마감"><label>마감 일시</label><input
                 type="datetime-local" id="timerDeadline" class="app-form-control">
-            <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('timerModal')">痍⑥냼</button><button
-                    class="btn-confirm" onclick="handleSaveTimer()">???/button></div>
+            <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('timerModal')">취소</button><button
+                    class="btn-confirm" onclick="handleSaveTimer()">저장</button></div>
         </div>
     </div>
     <div class="modal-overlay" id="timelineModal">
         <div class="modal-content">
-            <h2 class="modal-title" id="tlModalTitle">?쇱젙 異붽?</h2><label>??(?? 3??</label><input type="text" id="tlMonth"
-                class="app-form-control" placeholder="?? 3??><label>?댁슜</label><textarea id="tlText"
+            <h2 class="modal-title" id="tlModalTitle">일정 추가</h2><label>월 (예: 3월)</label><input type="text" id="tlMonth"
+                class="app-form-control" placeholder="예: 3월"><label>내용</label><textarea id="tlText"
                 class="app-form-control" style="min-height: 100px; resize: vertical;"></textarea>
             <div class="modal-actions"><button class="btn-cancel"
-                    onclick="closeModal('timelineModal')">痍⑥냼</button><button class="btn-confirm"
-                    onclick="handleSaveTimeline()">???/button></div>
+                    onclick="closeModal('timelineModal')">취소</button><button class="btn-confirm"
+                    onclick="handleSaveTimeline()">저장</button></div>
         </div>
     </div>
     <div class="modal-overlay" id="vendorModal">
         <div class="modal-content">
-            <h2 class="modal-title" id="vendorModalTitle">?낆껜 ?뺣낫</h2><input type="text" id="vName"
-                class="app-form-control" placeholder="?낆껜紐?><input type="text" id="vPhone" class="app-form-control"
-                placeholder="?곕씫泥?><input type="text" id="vItems" class="app-form-control" placeholder="二쇱슂 ?덈ぉ"><input
-                type="text" id="vNote" class="app-form-control" placeholder="硫붾え">
-            <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('vendorModal')">痍⑥냼</button><button
-                    class="btn-confirm" onclick="handleSaveVendor()">???/button></div>
+            <h2 class="modal-title" id="vendorModalTitle">업체 정보</h2><input type="text" id="vName"
+                class="app-form-control" placeholder="업체명"><input type="text" id="vPhone" class="app-form-control"
+                placeholder="연락처"><input type="text" id="vItems" class="app-form-control" placeholder="주요 품목"><input
+                type="text" id="vNote" class="app-form-control" placeholder="메모">
+            <div class="modal-actions"><button class="btn-cancel" onclick="closeModal('vendorModal')">취소</button><button
+                    class="btn-confirm" onclick="handleSaveVendor()">저장</button></div>
         </div>
     </div>
 
-    <!-- ?먮컮?ㅽ겕由쏀듃 ?듯빀遺 -->
+    <!-- 자바스크립트 통합부 -->
     <script>
-        // 1. Mock DB ?좎뼵 (?좎껌 ??ぉ 由ъ뒪???ы븿)
+        // 1. Mock DB 선언 (신청 항목 리스트 포함)
         const mockDatabase = {
             system_config: { fee_per_student: 50000, target_amount: 150000 },
-            users: [{ user_id: 'admin', password: '1234', role: 'admin', name: '???愿由ъ옄' }, { user_id: '20240001', password: '1234', role: 'student', name: '源泥좎닔' }],
-            students: [{ student_id: '20240001', name: '源泥좎닔', phone: '010-1234-5678', payment_status: '誘몄엯湲? }, { student_id: '20240002', name: '?댁쁺??, phone: '010-2345-6789', payment_status: '?뺤씤以? }],
-            expenses: [{ expense_id: 1, expense_date: '2024-03-02', description: '媛쒓컯珥앺쉶', amount: 45000 }],
+            users: [{ user_id: 'admin', password: '1234', role: 'admin', name: '대표 관리자' }, { user_id: '20240001', password: '1234', role: 'student', name: '김철수' }],
+            students: [{ student_id: '20240001', name: '김철수', phone: '010-1234-5678', payment_status: '미입금' }, { student_id: '20240002', name: '이영희', phone: '010-2345-6789', payment_status: '확인중' }],
+            expenses: [{ expense_id: 1, expense_date: '2024-03-02', description: '개강총회', amount: 45000 }],
 
-            // ?숈쟻 ?좎껌 ??ぉ ?곗씠?곕쿋?댁뒪
+            // 동적 신청 항목 데이터베이스
             app_items: [
-                { id: 1, name: '怨쇰났 ?좎껌 (?ъ씠利?M)' },
-                { id: 2, name: '怨쇰났 ?좎껌 (?ъ씠利?L)' },
-                { id: 3, name: '1?숆린 ?꾧났援먯옱 ?좎껌' },
-                { id: 4, name: 'MT/?⑦빀 ???李멸?' }
+                { id: 1, name: '과복 신청 (사이즈 M)' },
+                { id: 2, name: '과복 신청 (사이즈 L)' },
+                { id: 3, name: '1학기 전공교재 신청' },
+                { id: 4, name: 'MT/단합 대회 참가' }
             ],
 
-            applications: [{ app_id: 1, student_id: '20240001', name: '源泥좎닔', item_name: '怨쇰났 ?좎껌 (?ъ씠利?M)', applied_at: '2024-03-15 14:20' }],
-            timers: [{ id: 1, title: '怨쇰났 ?좎껌', deadline: new Date(Date.now() + 86400000 * 3).toISOString().slice(0, 16) }],
-            timeline: [{ id: 1, month: '3??, text: '???좎엯???ㅻ━?뷀뀒?댁뀡' }],
-            vendors: [{ id: 1, name: '?ㅽ뵾?쒕났??, phone: '02-123-4567', items: '?꾩닔留? ?ъ뒪??, note: '?좎씤 10%' }],
-            guide_content: "?뱦 **?숈깮?뚮퉬 愿由??먯튃**\n1. ?곸닔利앹? 寃곗젣 吏곹썑 梨숆만 寃?",
+            applications: [{ app_id: 1, student_id: '20240001', name: '김철수', item_name: '과복 신청 (사이즈 M)', applied_at: '2024-03-15 14:20' }],
+            timers: [{ id: 1, title: '과복 신청', deadline: new Date(Date.now() + 86400000 * 3).toISOString().slice(0, 16) }],
+            timeline: [{ id: 1, month: '3월', text: '▶ 신입생 오리엔테이션' }],
+            vendors: [{ id: 1, name: '스피드복사', phone: '02-123-4567', items: '현수막, 포스터', note: '할인 10%' }],
+            guide_content: "📌 **학생회비 관리 원칙**\n1. 영수증은 결제 직후 챙길 것.",
 
             _nextIds: { expense: 2, app: 2, timer: 2, timeline: 2, vendor: 2, app_item: 5 }
         };
 
         const delay = ms => new Promise(res => setTimeout(res, ms));
 
-        // 2. 媛??API
+        // 2. 가상 API
         const BASE_URL = '';
         const api = {
             async login(id, pw) {
-                const res = await fetch(${BASE_URL}/api/login, {
+                const res = await fetch(`${BASE_URL}/api/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ id, pw })
@@ -1233,12 +1233,12 @@
                 return res.json();
             },
             async fetchAllData() {
-                const res = await fetch(${BASE_URL}/api/data);
+                const res = await fetch(`${BASE_URL}/api/data`);
                 if (!res.ok) throw new Error("데이터 로드 실패");
                 return res.json();
             },
             async signup(d) {
-                const res = await fetch(${BASE_URL}/api/signup, {
+                const res = await fetch(`${BASE_URL}/api/signup`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(d)
@@ -1247,7 +1247,7 @@
                 return true;
             },
             async callAction(action, payload) {
-                const res = await fetch(${BASE_URL}/api/action, {
+                const res = await fetch(`${BASE_URL}/api/action`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ action, payload })
@@ -1317,7 +1317,7 @@
         } catch(e) {}
         let activePageId = 'page-dashboard'; let timerInterval = null; let currentEditId = null;
 
-        const formatMoney = num => new Intl.NumberFormat('ko-KR').format(num) + ' ??;
+        const formatMoney = num => new Intl.NumberFormat('ko-KR').format(num) + ' 원';
         const showLoading = () => document.getElementById('loadingOverlay').style.display = 'flex';
         const hideLoading = () => document.getElementById('loadingOverlay').style.display = 'none';
         const closeModal = id => document.getElementById(id).style.display = 'none';
@@ -1325,104 +1325,105 @@
         function showMessage(text, type = 'alert', onConfirm = null) {
             document.getElementById('msgText').textContent = text;
             const btn = document.getElementById('msgButtons'); btn.innerHTML = '';
-            if (type === 'confirm') { btn.innerHTML = `<button class="btn-cancel" onclick="closeModal('msgModal')">痍⑥냼</button><button class="btn-confirm" style="background:var(--accent-red)" id="msgConfirmBtn">?뺤씤</button>`; document.getElementById('msgConfirmBtn').onclick = () => { if (onConfirm) onConfirm(); closeModal('msgModal'); }; }
-            else { btn.innerHTML = `<button class="btn-confirm" onclick="closeModal('msgModal')">?뺤씤</button>`; }
+            if (type === 'confirm') { btn.innerHTML = `<button class="btn-cancel" onclick="closeModal('msgModal')">취소</button><button class="btn-confirm" style="background:var(--accent-red)" id="msgConfirmBtn">확인</button>`; document.getElementById('msgConfirmBtn').onclick = () => { if (onConfirm) onConfirm(); closeModal('msgModal'); }; }
+            else { btn.innerHTML = `<button class="btn-confirm" onclick="closeModal('msgModal')">확인</button>`; }
             document.getElementById('msgModal').style.display = 'flex';
         }
 
         window.isIdChecked = false;
         function openSignupModal() { window.isIdChecked = false; document.getElementById('signupId').value = ''; document.getElementById('signupPw').value = ''; document.getElementById('signupName').value = ''; document.getElementById('signupStdId').value = ''; document.getElementById('signupPhone').value = ''; document.getElementById('signupModal').style.display = 'flex'; }
-        async function checkDuplicateId() { const id = document.getElementById('signupId').value.trim(); if (!id) return showMessage('?꾩씠?붾? ?낅젰?댁＜?몄슂.'); showLoading(); try { const isDup = await api.checkDuplicateId(id); hideLoading(); if (isDup) { window.isIdChecked = false; showMessage('?대? 議댁옱?섎뒗 ?꾩씠?붿엯?덈떎.'); } else { window.isIdChecked = true; showMessage('?ъ슜 媛?ν븳 ?꾩씠?붿엯?덈떎.'); } } catch (e) { hideLoading(); } }
-        async function handleSignup() { const id = document.getElementById('signupId').value.trim(), pw = document.getElementById('signupPw').value, name = document.getElementById('signupName').value.trim(), stdId = document.getElementById('signupStdId').value.trim(), phone = document.getElementById('signupPhone').value.trim(); if (!id || !pw || !name || !stdId || !phone) return showMessage('紐⑤뱺 ?꾨뱶瑜??낅젰?댁＜?몄슂.'); if (!window.isIdChecked) return showMessage('?꾩씠??以묐났?뺤씤??吏꾪뻾?댁＜?몄슂.'); closeModal('signupModal'); showLoading(); try { await api.signup({ user_id: id, password: pw, name: name, student_id: stdId, phone: phone }); hideLoading(); showMessage('?뚯썝媛?낆씠 ?꾨즺?섏뿀?듬땲?? 濡쒓렇?명빐二쇱꽭??'); } catch (err) { hideLoading(); showMessage(err.message); } }
+        async function checkDuplicateId() { const id = document.getElementById('signupId').value.trim(); if (!id) return showMessage('아이디를 입력해주세요.'); showLoading(); try { const isDup = await api.checkDuplicateId(id); hideLoading(); if (isDup) { window.isIdChecked = false; showMessage('이미 존재하는 아이디입니다.'); } else { window.isIdChecked = true; showMessage('사용 가능한 아이디입니다.'); } } catch (e) { hideLoading(); } }
+        async function handleSignup() { const id = document.getElementById('signupId').value.trim(), pw = document.getElementById('signupPw').value, name = document.getElementById('signupName').value.trim(), stdId = document.getElementById('signupStdId').value.trim(), phone = document.getElementById('signupPhone').value.trim(); if (!id || !pw || !name || !stdId || !phone) return showMessage('모든 필드를 입력해주세요.'); if (!window.isIdChecked) return showMessage('아이디 중복확인을 진행해주세요.'); closeModal('signupModal'); showLoading(); try { await api.signup({ user_id: id, password: pw, name: name, student_id: stdId, phone: phone }); hideLoading(); showMessage('회원가입이 완료되었습니다. 로그인해주세요.'); } catch (err) { hideLoading(); showMessage(err.message); } }
 
         document.getElementById('loginForm').addEventListener('submit', async e => {
             e.preventDefault(); const id = document.getElementById('loginId').value.trim(); const pw = document.getElementById('loginPw').value; showLoading();
             try {
                 currentUser = await api.login(id, pw);
                 localStorage.setItem('currentUser', JSON.stringify(currentUser));
-                if (currentUser.role === 'admin') { document.body.classList.add('admin-mode'); document.getElementById('headerUserBadge').textContent = '愿由ъ옄'; document.getElementById('headerUserBadge').classList.add('admin-badge'); document.getElementById('appTableTitle').textContent = '?꾩껜 ?숈깮 ?좎껌 ?댁뿭 (愿由ъ옄??'; }
-                else { document.body.classList.remove('admin-mode'); document.getElementById('headerUserBadge').textContent = '?숈깮'; document.getElementById('headerUserBadge').classList.remove('admin-badge'); document.getElementById('appTableTitle').textContent = '?섏쓽 ?좎껌 ?댁뿭 議고쉶'; document.getElementById('appStudentId').value = currentUser.student_id || currentUser.user_id; document.getElementById('appName').value = currentUser.name; }
-                document.getElementById('headerUserName').textContent = currentUser.name + '??; document.getElementById('loginPage').style.display = 'none'; document.getElementById('appContainer').style.display = 'flex';
+                if (currentUser.role === 'admin') { document.body.classList.add('admin-mode'); document.getElementById('headerUserBadge').textContent = '관리자'; document.getElementById('headerUserBadge').classList.add('admin-badge'); document.getElementById('appTableTitle').textContent = '전체 학생 신청 내역 (관리자용)'; }
+                else { document.body.classList.remove('admin-mode'); document.getElementById('headerUserBadge').textContent = '학생'; document.getElementById('headerUserBadge').classList.remove('admin-badge'); document.getElementById('appTableTitle').textContent = '나의 신청 내역 조회'; document.getElementById('appStudentId').value = currentUser.student_id || currentUser.user_id; document.getElementById('appName').value = currentUser.name; }
+                document.getElementById('headerUserName').textContent = currentUser.name + '님'; document.getElementById('loginPage').style.display = 'none'; document.getElementById('appContainer').style.display = 'flex';
                 await refreshDataAndUI();
             } catch (err) { hideLoading(); showMessage(err.message); }
         });
 
-        function handleLogout() { showMessage("濡쒓렇?꾩썐 ?섏떆寃좎뒿?덇퉴?", "confirm", () => { currentUser = null; localStorage.removeItem('currentUser'); clearInterval(timerInterval); document.getElementById('loginForm').reset(); document.getElementById('appContainer').style.display = 'none'; document.getElementById('loginPage').style.display = 'flex'; document.querySelector('.nav-item[data-target="page-dashboard"]').click(); }); }
+        function handleLogout() { showMessage("로그아웃 하시겠습니까?", "confirm", () => { currentUser = null; localStorage.removeItem('currentUser'); clearInterval(timerInterval); document.getElementById('loginForm').reset(); document.getElementById('appContainer').style.display = 'none'; document.getElementById('loginPage').style.display = 'flex'; document.querySelector('.nav-item[data-target="page-dashboard"]').click(); }); }
 
         async function refreshDataAndUI() {
             try {
                 localState = await api.fetchAllData();
                 const fee = localState.system_config.fee_per_student;
                 const targetAmt = localState.system_config.target_amount !== undefined ? localState.system_config.target_amount : (localState.students.length * fee);
-                const comp = localState.students.filter(s => s.payment_status === '?꾨즺').length; const notp = localState.students.filter(s => s.payment_status === '誘몄엯湲?).length; const pend = localState.students.filter(s => s.payment_status === '?뺤씤以?).length;
+                const comp = localState.students.filter(s => s.payment_status === '완료').length; const notp = localState.students.filter(s => s.payment_status === '미입금').length; const pend = localState.students.filter(s => s.payment_status === '확인중').length;
                 const depAmt = comp * fee; const totExp = localState.expenses.reduce((s, e) => s + e.amount, 0); const bal = depAmt - totExp; const dRate = targetAmt === 0 ? 0 : (depAmt / targetAmt) * 100;
 
-                // 1. ??쒕낫??諛??뺤궛
-                document.getElementById('dashFeeAmt').textContent = new Intl.NumberFormat('ko-KR').format(fee); document.getElementById('dashTarget').textContent = formatMoney(targetAmt); document.getElementById('dashDeposited').textContent = formatMoney(depAmt); document.getElementById('dashDepositRate').textContent = `?ъ꽦瑜? ${dRate.toFixed(1)}%`; document.getElementById('dashBalance').textContent = formatMoney(bal); document.getElementById('dashExpense').textContent = `珥?吏異? ${formatMoney(totExp)}`; document.getElementById('dashPending').textContent = `${notp + pend} 紐?; document.getElementById('dashPendingSub').textContent = `誘몄엯湲?${notp}紐?/ ?뺤씤以?${pend}紐?;
-                document.getElementById('studentTableBody').innerHTML = localState.students.map(s => `<tr><td>${s.student_id}</td><td>${s.name}</td><td>${s.phone}</td><td><span class="status-badge status-${s.payment_status === '?꾨즺' ? 'done' : s.payment_status === '?뺤씤以? ? 'pending' : 'none'}">${s.payment_status}</span></td><td class="admin-only" style="text-align:center;"><button class="btn-edit" onclick="openEditStudent('${s.student_id}')">?섏젙</button></td></tr>`).join('');
+                // 1. 대시보드 및 정산
+                document.getElementById('dashFeeAmt').textContent = new Intl.NumberFormat('ko-KR').format(fee); document.getElementById('dashTarget').textContent = formatMoney(targetAmt); document.getElementById('dashDeposited').textContent = formatMoney(depAmt); document.getElementById('dashDepositRate').textContent = `달성률: ${dRate.toFixed(1)}%`; document.getElementById('dashBalance').textContent = formatMoney(bal); document.getElementById('dashExpense').textContent = `총 지출: ${formatMoney(totExp)}`; document.getElementById('dashPending').textContent = `${notp + pend} 명`; document.getElementById('dashPendingSub').textContent = `미입금 ${notp}명 / 확인중 ${pend}명`;
+                document.getElementById('studentTableBody').innerHTML = localState.students.map(s => `<tr><td>${s.student_id}</td><td>${s.name}</td><td>${s.phone}</td><td><span class="status-badge status-${s.payment_status === '완료' ? 'done' : s.payment_status === '확인중' ? 'pending' : 'none'}">${s.payment_status}</span></td><td class="admin-only" style="text-align:center;"><button class="btn-edit" onclick="openEditStudent('${s.student_id}')">수정</button></td></tr>`).join('');
                 document.getElementById('settleTotalIncome').textContent = formatMoney(depAmt); document.getElementById('settleTotalExpense').textContent = formatMoney(totExp); document.getElementById('settleBalance').textContent = formatMoney(bal); document.getElementById('settlementProgressText').textContent = `${dRate.toFixed(1)}%`; document.getElementById('settlementProgressBar').style.width = `${Math.min(dRate, 100)}%`;
-                document.getElementById('expenseTableBody').innerHTML = localState.expenses.sort((a, b) => new Date(b.expense_date) - new Date(a.expense_date)).map(e => `<tr><td>${e.expense_date}</td><td>${e.description}</td><td style="text-align:right; color:var(--accent-red); font-weight:600;">-${formatMoney(e.amount)}</td><td class="admin-only" style="text-align:center;"><button class="btn-delete" onclick="handleDeleteExpense(${e.expense_id})">??젣</button></td></tr>`).join('') || `<tr><td colspan="4" style="text-align:center;color:gray;">?댁뿭 ?놁쓬</td></tr>`;
+                document.getElementById('expenseTableBody').innerHTML = localState.expenses.sort((a, b) => new Date(b.expense_date) - new Date(a.expense_date)).map(e => `<tr><td>${e.expense_date}</td><td>${e.description}</td><td style="text-align:right; color:var(--accent-red); font-weight:600;">-${formatMoney(e.amount)}</td><td class="admin-only" style="text-align:center;"><button class="btn-delete" onclick="handleDeleteExpense(${e.expense_id})">삭제</button></td></tr>`).join('') || `<tr><td colspan="4" style="text-align:center;color:gray;">내역 없음</td></tr>`;
 
-                // 2. ?좎껌 ?뚰듃 (?숈쟻 ?쒕∼?ㅼ슫 ?뚮뜑留?
-                document.getElementById('appItem').innerHTML = '<option value="" disabled selected>??ぉ ?좏깮</option>' + localState.app_items.map(i => `<option value="${i.name}">${i.name}</option>`).join('');
+                // 2. 신청 파트 (동적 드롭다운 렌더링)
+                document.getElementById('appItem').innerHTML = '<option value="" disabled selected>항목 선택</option>' + localState.app_items.map(i => `<option value="${i.name}">${i.name}</option>`).join('');
 
                 if (currentUser && currentUser.role === 'admin') {
-                    document.getElementById('appItemTableBody').innerHTML = localState.app_items.map(i => `<tr><td style="font-weight:600; color:var(--text-dark);">${i.name}</td><td style="text-align:center;"><button class="btn-delete" onclick="handleDeleteAppItem(${i.id})">??젣</button></td></tr>`).join('') || `<tr><td colspan="2" style="text-align:center;color:gray;">?깅줉????ぉ???놁뒿?덈떎.</td></tr>`;
+                    document.getElementById('appItemTableBody').innerHTML = localState.app_items.map(i => `<tr><td style="font-weight:600; color:var(--text-dark);">${i.name}</td><td style="text-align:center;"><button class="btn-delete" onclick="handleDeleteAppItem(${i.id})">삭제</button></td></tr>`).join('') || `<tr><td colspan="2" style="text-align:center;color:gray;">등록된 항목이 없습니다.</td></tr>`;
                 }
 
                 let dApps = currentUser.role === 'admin' ? localState.applications : localState.applications.filter(a => a.student_id === (currentUser.student_id || currentUser.user_id));
-                document.getElementById('applicationTableBody').innerHTML = dApps.sort((a, b) => new Date(b.applied_at) - new Date(a.applied_at)).map(a => `<tr><td style="font-size:0.85rem;color:gray;">${a.applied_at}</td><td>${a.student_id}</td><td style="font-weight:600;">${a.name}</td><td style="color:var(--accent-blue);">${a.item_name}</td><td style="text-align:center;"><button class="btn-delete" onclick="handleDeleteApplication(${a.app_id})">痍⑥냼(??젣)</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:gray;">?좎껌 ?댁뿭 ?놁쓬</td></tr>`;
+                document.getElementById('applicationTableBody').innerHTML = dApps.sort((a, b) => new Date(b.applied_at) - new Date(a.applied_at)).map(a => `<tr><td style="font-size:0.85rem;color:gray;">${a.applied_at}</td><td>${a.student_id}</td><td style="font-weight:600;">${a.name}</td><td style="color:var(--accent-blue);">${a.item_name}</td><td style="text-align:center;"><button class="btn-delete" onclick="handleDeleteApplication(${a.app_id})">취소(삭제)</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:gray;">신청 내역 없음</td></tr>`;
 
-                // 3. 留ㅻ돱??                document.getElementById('timelineContainer').innerHTML = localState.timeline.map(t => `<div class="timeline-item"><div class="timeline-month">${t.month} <div class="admin-only" style="display:inline-block;"><button class="btn-edit" onclick="openTimelineModal(${t.id})">?섏젙</button><button class="btn-delete" onclick="handleDeleteTimeline(${t.id})">??젣</button></div></div><div class="timeline-desc"><p>${t.text.replace(/\n/g, '<br>')}</p></div></div>`).join('');
-                document.getElementById('vendorTableBody').innerHTML = localState.vendors.map(v => `<tr><td style="font-weight:bold;color:var(--primary-navy)">${v.name}</td><td>${v.phone}</td><td>${v.items}</td><td style="font-size:0.85rem;color:gray;">${v.note}</td><td class="admin-only" style="text-align:center;"><button class="btn-edit" onclick="openVendorModal(${v.id})">?섏젙</button><button class="btn-delete" onclick="handleDeleteVendor(${v.id})">??젣</button></td></tr>`).join('');
+                // 3. 매뉴얼
+                document.getElementById('timelineContainer').innerHTML = localState.timeline.map(t => `<div class="timeline-item"><div class="timeline-month">${t.month} <div class="admin-only" style="display:inline-block;"><button class="btn-edit" onclick="openTimelineModal(${t.id})">수정</button><button class="btn-delete" onclick="handleDeleteTimeline(${t.id})">삭제</button></div></div><div class="timeline-desc"><p>${t.text.replace(/\n/g, '<br>')}</p></div></div>`).join('');
+                document.getElementById('vendorTableBody').innerHTML = localState.vendors.map(v => `<tr><td style="font-weight:bold;color:var(--primary-navy)">${v.name}</td><td>${v.phone}</td><td>${v.items}</td><td style="font-size:0.85rem;color:gray;">${v.note}</td><td class="admin-only" style="text-align:center;"><button class="btn-edit" onclick="openVendorModal(${v.id})">수정</button><button class="btn-delete" onclick="handleDeleteVendor(${v.id})">삭제</button></td></tr>`).join('');
                 document.getElementById('guideDisplay').innerHTML = localState.guide_content.replace(/\n/g, '<br>'); document.getElementById('guideEditor').value = localState.guide_content;
 
                 startTimers();
-            } catch (e) { showMessage("?곗씠??濡쒕뱶 ?ㅽ뙣"); } finally { hideLoading(); }
+            } catch (e) { showMessage("데이터 로드 실패"); } finally { hideLoading(); }
         }
 
         function startTimers() {
             if (timerInterval) clearInterval(timerInterval);
-            const render = () => { const now = new Date(); document.getElementById('timerCardsContainer').innerHTML = localState.timers.map(t => { const diff = new Date(t.deadline) - now; let disp = "留덇컧??, cls = "timer-ended"; if (diff > 0) { const d = Math.floor(diff / (1000 * 60 * 60 * 24)), h = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0'), m = String(Math.floor((diff / 1000 / 60) % 60)).padStart(2, '0'), s = String(Math.floor((diff / 1000) % 60)).padStart(2, '0'); disp = d > 0 ? `D-${d} ${h}:${m}:${s}` : `${h}:${m}:${s}`; cls = ""; } return `<div class="card timer-card ${cls}"><div class="timer-title">${t.title}</div><div class="timer-countdown">${disp}</div><div class="timer-deadline">留덇컧: ${t.deadline.replace('T', ' ')}</div><div class="admin-only" style="margin-top:10px;"><button class="btn-edit" style="color:white;border-color:white;" onclick="openTimerModal(${t.id})">?섏젙</button><button class="btn-delete" style="color:white;border-color:white;" onclick="handleDeleteTimer(${t.id})">??젣</button></div></div>`; }).join('') || `<div style="color:gray; padding: 20px;">?깅줉????대㉧媛 ?놁뒿?덈떎.</div>`; };
+            const render = () => { const now = new Date(); document.getElementById('timerCardsContainer').innerHTML = localState.timers.map(t => { const diff = new Date(t.deadline) - now; let disp = "마감됨", cls = "timer-ended"; if (diff > 0) { const d = Math.floor(diff / (1000 * 60 * 60 * 24)), h = String(Math.floor((diff / (1000 * 60 * 60)) % 24)).padStart(2, '0'), m = String(Math.floor((diff / 1000 / 60) % 60)).padStart(2, '0'), s = String(Math.floor((diff / 1000) % 60)).padStart(2, '0'); disp = d > 0 ? `D-${d} ${h}:${m}:${s}` : `${h}:${m}:${s}`; cls = ""; } return `<div class="card timer-card ${cls}"><div class="timer-title">${t.title}</div><div class="timer-countdown">${disp}</div><div class="timer-deadline">마감: ${t.deadline.replace('T', ' ')}</div><div class="admin-only" style="margin-top:10px;"><button class="btn-edit" style="color:white;border-color:white;" onclick="openTimerModal(${t.id})">수정</button><button class="btn-delete" style="color:white;border-color:white;" onclick="handleDeleteTimer(${t.id})">삭제</button></div></div>`; }).join('') || `<div style="color:gray; padding: 20px;">등록된 타이머가 없습니다.</div>`; };
             render(); timerInterval = setInterval(render, 1000);
         }
 
-        // ?ㅻ퉬寃뚯씠??& ?좉?
+        // 네비게이션 & 토글
         document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', e => { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); e.currentTarget.classList.add('active'); activePageId = e.currentTarget.getAttribute('data-target'); document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active')); document.getElementById(activePageId).classList.add('active'); document.getElementById('mainTitle').textContent = e.currentTarget.textContent.replace(/[^\uAC00-\uD7A3\s]/g, '').trim(); document.getElementById('btnExcel').style.display = (currentUser?.role === 'admin' && (activePageId === 'page-students' || activePageId === 'page-settlement')) ? 'block' : 'none'; document.getElementById('sidebar').classList.remove('open'); }));
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
         function openTab(id, btn) { document.querySelectorAll('.tab-content, .tab-btn').forEach(el => el.classList.remove('active')); document.getElementById(id).classList.add('active'); btn.classList.add('active'); }
         function toggleGuideEdit() { const d = document.getElementById('guideDisplay'), e = document.getElementById('guideEditArea'), b = document.getElementById('btnEditGuide'); if (e.style.display === 'none') { d.style.display = 'none'; e.style.display = 'block'; b.style.display = 'none'; } else { d.style.display = 'block'; e.style.display = 'none'; b.style.display = 'inline-block'; document.getElementById('guideEditor').value = localState.guide_content; } }
-        async function saveGuide() { showLoading(); try { await api.updateGuide(document.getElementById('guideEditor').value); await refreshDataAndUI(); toggleGuideEdit(); showMessage('媛?대뱶 ????꾨즺'); } catch (e) { hideLoading(); } }
+        async function saveGuide() { showLoading(); try { await api.updateGuide(document.getElementById('guideEditor').value); await refreshDataAndUI(); toggleGuideEdit(); showMessage('가이드 저장 완료'); } catch (e) { hideLoading(); } }
 
-        // CRUD (?숈깮, ?뺤궛)
+        // CRUD (학생, 정산)
         function openEditStudent(id) { currentEditId = id; const s = localState.students.find(x => x.student_id === id); document.getElementById('editStudentName').textContent = `${s.student_id} ${s.name}`; document.getElementById('editStudentStatus').value = s.payment_status; document.getElementById('editStudentModal').style.display = 'flex'; }
         async function handleSaveStudentStatus() { closeModal('editStudentModal'); showLoading(); try { await api.updatePaymentStatus(currentEditId, document.getElementById('editStudentStatus').value); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
         function openAddStudentModal() { document.getElementById('addStdId').value = ''; document.getElementById('addStdName').value = ''; document.getElementById('addStdPhone').value = ''; document.getElementById('addStudentModal').style.display = 'flex'; }
-        async function handleAddStudent() { const id = document.getElementById('addStdId').value, n = document.getElementById('addStdName').value, p = document.getElementById('addStdPhone').value; if (!id || !n) return showMessage('?숇쾲/?대쫫 ?꾩닔'); closeModal('addStudentModal'); showLoading(); try { await api.insertStudent({ student_id: id, name: n, phone: p, payment_status: '誘몄엯湲? }); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
+        async function handleAddStudent() { const id = document.getElementById('addStdId').value, n = document.getElementById('addStdName').value, p = document.getElementById('addStdPhone').value; if (!id || !n) return showMessage('학번/이름 필수'); closeModal('addStudentModal'); showLoading(); try { await api.insertStudent({ student_id: id, name: n, phone: p, payment_status: '미입금' }); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
         function openConfigModal() { document.getElementById('configTarget').value = localState.system_config.target_amount || (localState.students.length * localState.system_config.fee_per_student); document.getElementById('configFee').value = localState.system_config.fee_per_student; document.getElementById('configModal').style.display = 'flex'; }
-        async function handleSaveConfig() { const t = parseInt(document.getElementById('configTarget').value), f = parseInt(document.getElementById('configFee').value); if (isNaN(t) || isNaN(f)) return showMessage('湲덉븸 ?ㅻ쪟'); closeModal('configModal'); showLoading(); try { await api.updateConfig(t, f); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
-        async function handleAddExpense() { const d = document.getElementById('expDate').value, desc = document.getElementById('expDesc').value, amt = parseInt(document.getElementById('expAmount').value); if (!d || !desc || isNaN(amt)) return showMessage('?낅젰 ?ㅻ쪟'); showLoading(); try { await api.insertExpense({ expense_date: d, description: desc, amount: amt }); document.getElementById('expDesc').value = ''; document.getElementById('expAmount').value = ''; await refreshDataAndUI(); } catch (e) { hideLoading(); } }
-        function handleDeleteExpense(id) { showMessage('??젣?섏떆寃좎뒿?덇퉴?', 'confirm', async () => { showLoading(); try { await api.deleteExpense(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
+        async function handleSaveConfig() { const t = parseInt(document.getElementById('configTarget').value), f = parseInt(document.getElementById('configFee').value); if (isNaN(t) || isNaN(f)) return showMessage('금액 오류'); closeModal('configModal'); showLoading(); try { await api.updateConfig(t, f); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
+        async function handleAddExpense() { const d = document.getElementById('expDate').value, desc = document.getElementById('expDesc').value, amt = parseInt(document.getElementById('expAmount').value); if (!d || !desc || isNaN(amt)) return showMessage('입력 오류'); showLoading(); try { await api.insertExpense({ expense_date: d, description: desc, amount: amt }); document.getElementById('expDesc').value = ''; document.getElementById('expAmount').value = ''; await refreshDataAndUI(); } catch (e) { hideLoading(); } }
+        function handleDeleteExpense(id) { showMessage('삭제하시겠습니까?', 'confirm', async () => { showLoading(); try { await api.deleteExpense(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
 
-        // CRUD (?좎껌)
-        document.getElementById('appForm').addEventListener('submit', async e => { e.preventDefault(); showLoading(); try { await api.insertApplication({ student_id: document.getElementById('appStudentId').value, name: document.getElementById('appName').value, item_name: document.getElementById('appItem').value }); document.getElementById('appItem').value = ""; await refreshDataAndUI(); showMessage('?좎껌 ?꾨즺!'); } catch (err) { hideLoading(); showMessage(err.message === "以묐났?좎껌" ? "?대? ?좎껌?섏떊 ??ぉ?낅땲??" : "?좎껌 ?ㅽ뙣"); } });
-        function handleDeleteApplication(id) { showMessage('?좎껌??痍⑥냼?섏떆寃좎뒿?덇퉴?', 'confirm', async () => { showLoading(); try { await api.deleteApplication(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
-        async function handleAddAppItem() { const name = document.getElementById('newAppItemName').value.trim(); if (!name) return showMessage('??ぉ ?대쫫???낅젰?섏꽭??'); showLoading(); try { await api.saveAppItem(name); document.getElementById('newAppItemName').value = ''; await refreshDataAndUI(); showMessage('?좎껌 ??ぉ??異붽??섏뿀?듬땲??'); } catch (e) { hideLoading(); } }
-        function handleDeleteAppItem(id) { showMessage('????ぉ????젣?섏떆寃좎뒿?덇퉴?\n(湲곗〈 ?좎껌 ?댁뿭? ?좎??⑸땲??', 'confirm', async () => { showLoading(); try { await api.deleteAppItem(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
+        // CRUD (신청)
+        document.getElementById('appForm').addEventListener('submit', async e => { e.preventDefault(); showLoading(); try { await api.insertApplication({ student_id: document.getElementById('appStudentId').value, name: document.getElementById('appName').value, item_name: document.getElementById('appItem').value }); document.getElementById('appItem').value = ""; await refreshDataAndUI(); showMessage('신청 완료!'); } catch (err) { hideLoading(); showMessage(err.message === "중복신청" ? "이미 신청하신 항목입니다." : "신청 실패"); } });
+        function handleDeleteApplication(id) { showMessage('신청을 취소하시겠습니까?', 'confirm', async () => { showLoading(); try { await api.deleteApplication(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
+        async function handleAddAppItem() { const name = document.getElementById('newAppItemName').value.trim(); if (!name) return showMessage('항목 이름을 입력하세요.'); showLoading(); try { await api.saveAppItem(name); document.getElementById('newAppItemName').value = ''; await refreshDataAndUI(); showMessage('신청 항목이 추가되었습니다.'); } catch (e) { hideLoading(); } }
+        function handleDeleteAppItem(id) { showMessage('이 항목을 삭제하시겠습니까?\n(기존 신청 내역은 유지됩니다)', 'confirm', async () => { showLoading(); try { await api.deleteAppItem(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
 
-        // CRUD (??대㉧, ??꾨씪?? ?낆껜)
-        function openTimerModal(id = null) { currentEditId = id; if (id) { const t = localState.timers.find(x => x.id === id); document.getElementById('timerTitle').value = t.title; document.getElementById('timerDeadline').value = t.deadline; document.getElementById('timerModalTitle').textContent = "??대㉧ ?섏젙"; } else { document.getElementById('timerTitle').value = ''; document.getElementById('timerDeadline').value = ''; document.getElementById('timerModalTitle').textContent = "??대㉧ 異붽?"; } document.getElementById('timerModal').style.display = 'flex'; }
-        async function handleSaveTimer() { const t = document.getElementById('timerTitle').value, d = document.getElementById('timerDeadline').value; if (!t || !d) return showMessage('?낅젰 ?ㅻ쪟'); closeModal('timerModal'); showLoading(); try { await api.saveTimer({ id: currentEditId, title: t, deadline: d }); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
-        function handleDeleteTimer(id) { showMessage('??젣?섏떆寃좎뒿?덇퉴?', 'confirm', async () => { showLoading(); try { await api.deleteTimer(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
-        function openTimelineModal(id = null) { currentEditId = id; if (id) { const t = localState.timeline.find(x => x.id === id); document.getElementById('tlMonth').value = t.month; document.getElementById('tlText').value = t.text; document.getElementById('tlModalTitle').textContent = "?쇱젙 ?섏젙"; } else { document.getElementById('tlMonth').value = ''; document.getElementById('tlText').value = ''; document.getElementById('tlModalTitle').textContent = "?쇱젙 異붽?"; } document.getElementById('timelineModal').style.display = 'flex'; }
-        async function handleSaveTimeline() { const m = document.getElementById('tlMonth').value, t = document.getElementById('tlText').value; if (!m || !t) return showMessage('?낅젰 ?ㅻ쪟'); closeModal('timelineModal'); showLoading(); try { await api.saveTimeline({ id: currentEditId, month: m, text: t }); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
-        function handleDeleteTimeline(id) { showMessage('??젣?섏떆寃좎뒿?덇퉴?', 'confirm', async () => { showLoading(); try { await api.deleteTimeline(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
-        function openVendorModal(id = null) { currentEditId = id; if (id) { const v = localState.vendors.find(x => x.id === id); document.getElementById('vName').value = v.name; document.getElementById('vPhone').value = v.phone; document.getElementById('vItems').value = v.items; document.getElementById('vNote').value = v.note; document.getElementById('vendorModalTitle').textContent = "?낆껜 ?섏젙"; } else { document.getElementById('vName').value = ''; document.getElementById('vPhone').value = ''; document.getElementById('vItems').value = ''; document.getElementById('vNote').value = ''; document.getElementById('vendorModalTitle').textContent = "?낆껜 異붽?"; } document.getElementById('vendorModal').style.display = 'flex'; }
-        async function handleSaveVendor() { const n = document.getElementById('vName').value, p = document.getElementById('vPhone').value, i = document.getElementById('vItems').value, nt = document.getElementById('vNote').value; if (!n) return showMessage('?낆껜紐??꾩닔'); closeModal('vendorModal'); showLoading(); try { await api.saveVendor({ id: currentEditId, name: n, phone: p, items: i, note: nt }); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
-        function handleDeleteVendor(id) { showMessage('?낆껜瑜???젣?섏떆寃좎뒿?덇퉴?', 'confirm', async () => { showLoading(); try { await api.deleteVendor(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
+        // CRUD (타이머, 타임라인, 업체)
+        function openTimerModal(id = null) { currentEditId = id; if (id) { const t = localState.timers.find(x => x.id === id); document.getElementById('timerTitle').value = t.title; document.getElementById('timerDeadline').value = t.deadline; document.getElementById('timerModalTitle').textContent = "타이머 수정"; } else { document.getElementById('timerTitle').value = ''; document.getElementById('timerDeadline').value = ''; document.getElementById('timerModalTitle').textContent = "타이머 추가"; } document.getElementById('timerModal').style.display = 'flex'; }
+        async function handleSaveTimer() { const t = document.getElementById('timerTitle').value, d = document.getElementById('timerDeadline').value; if (!t || !d) return showMessage('입력 오류'); closeModal('timerModal'); showLoading(); try { await api.saveTimer({ id: currentEditId, title: t, deadline: d }); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
+        function handleDeleteTimer(id) { showMessage('삭제하시겠습니까?', 'confirm', async () => { showLoading(); try { await api.deleteTimer(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
+        function openTimelineModal(id = null) { currentEditId = id; if (id) { const t = localState.timeline.find(x => x.id === id); document.getElementById('tlMonth').value = t.month; document.getElementById('tlText').value = t.text; document.getElementById('tlModalTitle').textContent = "일정 수정"; } else { document.getElementById('tlMonth').value = ''; document.getElementById('tlText').value = ''; document.getElementById('tlModalTitle').textContent = "일정 추가"; } document.getElementById('timelineModal').style.display = 'flex'; }
+        async function handleSaveTimeline() { const m = document.getElementById('tlMonth').value, t = document.getElementById('tlText').value; if (!m || !t) return showMessage('입력 오류'); closeModal('timelineModal'); showLoading(); try { await api.saveTimeline({ id: currentEditId, month: m, text: t }); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
+        function handleDeleteTimeline(id) { showMessage('삭제하시겠습니까?', 'confirm', async () => { showLoading(); try { await api.deleteTimeline(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
+        function openVendorModal(id = null) { currentEditId = id; if (id) { const v = localState.vendors.find(x => x.id === id); document.getElementById('vName').value = v.name; document.getElementById('vPhone').value = v.phone; document.getElementById('vItems').value = v.items; document.getElementById('vNote').value = v.note; document.getElementById('vendorModalTitle').textContent = "업체 수정"; } else { document.getElementById('vName').value = ''; document.getElementById('vPhone').value = ''; document.getElementById('vItems').value = ''; document.getElementById('vNote').value = ''; document.getElementById('vendorModalTitle').textContent = "업체 추가"; } document.getElementById('vendorModal').style.display = 'flex'; }
+        async function handleSaveVendor() { const n = document.getElementById('vName').value, p = document.getElementById('vPhone').value, i = document.getElementById('vItems').value, nt = document.getElementById('vNote').value; if (!n) return showMessage('업체명 필수'); closeModal('vendorModal'); showLoading(); try { await api.saveVendor({ id: currentEditId, name: n, phone: p, items: i, note: nt }); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
+        function handleDeleteVendor(id) { showMessage('업체를 삭제하시겠습니까?', 'confirm', async () => { showLoading(); try { await api.deleteVendor(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
 
-        // 湲고? 湲곕뒫
-        function downloadExcel() { let csv = "\uFEFF", fn = ""; if (activePageId === 'page-students') { fn = "?숈깮紐낅떒.csv"; csv += "?숇쾲,?대쫫,?곕씫泥??낃툑?곹깭\n"; localState.students.forEach(s => csv += `${s.student_id},${s.name},${s.phone},${s.payment_status}\n`); } else if (activePageId === 'page-settlement') { fn = "?뺤궛?댁뿭.csv"; csv += "?좎쭨,?댁뿭,湲덉븸\n"; localState.expenses.forEach(e => csv += `${e.expense_date},"${e.description.replace(/"/g, '""')}",${e.amount}\n`); } else return; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' })); a.download = fn; a.click(); }
+        // 기타 기능
+        function downloadExcel() { let csv = "\uFEFF", fn = ""; if (activePageId === 'page-students') { fn = "학생명단.csv"; csv += "학번,이름,연락처,입금상태\n"; localState.students.forEach(s => csv += `${s.student_id},${s.name},${s.phone},${s.payment_status}\n`); } else if (activePageId === 'page-settlement') { fn = "정산내역.csv"; csv += "날짜,내역,금액\n"; localState.expenses.forEach(e => csv += `${e.expense_date},"${e.description.replace(/"/g, '""')}",${e.amount}\n`); } else return; const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' })); a.download = fn; a.click(); }
         document.getElementById('studentSearch').addEventListener('input', e => document.querySelectorAll('#studentTableBody tr').forEach(r => r.style.display = r.textContent.toLowerCase().includes(e.target.value.toLowerCase()) ? '' : 'none'));
         document.getElementById('vendorSearch').addEventListener('input', e => document.querySelectorAll('#vendorTableBody tr').forEach(r => r.style.display = r.textContent.toLowerCase().includes(e.target.value.toLowerCase()) ? '' : 'none'));
 
@@ -1431,9 +1432,9 @@
             if (currentUser) {
                 document.getElementById('loginPage').style.display = 'none';
                 document.getElementById('appContainer').style.display = 'flex';
-                if (currentUser.role === 'admin') { document.body.classList.add('admin-mode'); document.getElementById('headerUserBadge').textContent = '愿由ъ옄'; document.getElementById('headerUserBadge').classList.add('admin-badge'); document.getElementById('appTableTitle').textContent = '?꾩껜 ?숈깮 ?좎껌 ?댁뿭 (愿由ъ옄??'; }
-                else { document.body.classList.remove('admin-mode'); document.getElementById('headerUserBadge').textContent = '?숈깮'; document.getElementById('headerUserBadge').classList.remove('admin-badge'); document.getElementById('appTableTitle').textContent = '?섏쓽 ?좎껌 ?댁뿭 議고쉶'; document.getElementById('appStudentId').value = currentUser.student_id || currentUser.user_id; document.getElementById('appName').value = currentUser.name; }
-                document.getElementById('headerUserName').textContent = currentUser.name + '??;
+                if (currentUser.role === 'admin') { document.body.classList.add('admin-mode'); document.getElementById('headerUserBadge').textContent = '관리자'; document.getElementById('headerUserBadge').classList.add('admin-badge'); document.getElementById('appTableTitle').textContent = '전체 학생 신청 내역 (관리자용)'; }
+                else { document.body.classList.remove('admin-mode'); document.getElementById('headerUserBadge').textContent = '학생'; document.getElementById('headerUserBadge').classList.remove('admin-badge'); document.getElementById('appTableTitle').textContent = '나의 신청 내역 조회'; document.getElementById('appStudentId').value = currentUser.student_id || currentUser.user_id; document.getElementById('appName').value = currentUser.name; }
+                document.getElementById('headerUserName').textContent = currentUser.name + '님';
                 showLoading();
                 try { await refreshDataAndUI(); } catch(e) {}
                 hideLoading();
