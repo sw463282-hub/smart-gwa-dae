@@ -6,6 +6,9 @@ module.exports = async function handler(req, res) {
     }
 
     try {
+        if (req.query.reset === 'true') {
+            await pool.query('DROP TABLE IF EXISTS users, students, expenses, applications, app_items, timers, timeline, vendors, system_config');
+        }
         // 모든 필수 테이블 자동 생성 (smart-gwa-dae 스키마 내부에서만 안전하게 실행됨)
         await pool.query(`
             CREATE TABLE IF NOT EXISTS users (
