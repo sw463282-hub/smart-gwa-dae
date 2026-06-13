@@ -27,6 +27,12 @@ module.exports = async function handler(req, res) {
             [user_id, password, name, student_id, phone, role]
         );
 
+        // 학생 명단에도 자동 추가 (이미 있으면 무시)
+        await pool.query(
+            'INSERT IGNORE INTO students (student_id, name, phone, payment_status) VALUES (?, ?, ?, ?)',
+            [student_id, name, phone, '미입금']
+        );
+
         res.status(200).json({ message: '회원가입 성공' });
     } catch (error) {
         console.error("Signup Error:", error);
