@@ -1,4 +1,4 @@
-const pool = require('./db.js');
+const pool = require('../lib/db.js');
 
 module.exports = async function handler(req, res) {
     if (req.method !== 'POST') {
