@@ -57,21 +57,16 @@
             text-align: center;
         }
 
-        .brand-logo {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 2.5rem;
+        .login-card h1 {
+            color: var(--primary-navy);
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+            font-weight: 800;
         }
 
-        .brand-logo span {
-            font-size: 2.4rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, var(--primary-navy) 0%, var(--accent-blue) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -1px;
+        .login-card p {
+            color: var(--text-gray);
+            margin-bottom: 2rem;
         }
 
         .login-input {
@@ -151,23 +146,11 @@
         }
 
         .sidebar-brand {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            font-size: 1.6rem;
+            font-size: 1.5rem;
             font-weight: 800;
             padding: 2rem 1.5rem;
+            text-align: center;
             border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--primary-white);
-            letter-spacing: -1px;
-        }
-
-        /* 아이콘(28px) 크기만큼 오른쪽에 투명한 여백을 주어 텍스트가 정확히 중앙에 오도록 교정 */
-        .sidebar-brand::after {
-            content: '';
-            width: 28px;
-            display: block;
         }
 
         .sidebar-menu {
@@ -279,10 +262,6 @@
 
         /* 권한 제어 핵심 CSS (학생 모드일 때 관리자용 숨김) */
         body:not(.admin-mode) .admin-only {
-            display: none !important;
-        }
-
-        body.admin-mode .student-only {
             display: none !important;
         }
 
@@ -843,40 +822,29 @@
     <!-- 0. 로그인 페이지 -->
     <div id="loginPage">
         <div class="login-card">
-            <div class="brand-logo">
-                <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="url(#logo-grad)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <defs>
-                        <linearGradient id="logo-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-                            <stop offset="0%" stop-color="#3498DB" />
-                            <stop offset="100%" stop-color="#1B2A47" />
-                        </linearGradient>
-                    </defs>
-                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                </svg>
-                <span>과대 zip</span>
-            </div>
+            <h1>Smart Gwa-dae</h1>
+            <p>학과 전산 관리 시스템</p>
             <form id="loginForm">
-                <input type="text" id="loginId" class="login-input" placeholder="아이디" required>
+                <input type="text" id="loginId" class="login-input" placeholder="아이디 (학번 또는 admin)" required>
                 <input type="password" id="loginPw" class="login-input" placeholder="비밀번호" required>
                 <button type="submit" class="btn-login">로그인</button>
                 <button type="button" class="btn-signup" onclick="openSignupModal()">회원가입</button>
             </form>
-
+            <div class="test-accounts">
+                <strong>[테스트 계정]</strong><br>
+                👑 관리자: <code>admin</code> / <code>1234</code><br>
+                🎓 학생: <code>20240001</code> / <code>1234</code>
+            </div>
         </div>
     </div>
 
     <!-- 메인 앱 컨테이너 -->
     <div id="appContainer">
         <aside class="sidebar" id="sidebar">
-            <div class="sidebar-brand">
-                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
-                </svg>
-                <span>과대 zip</span>
-            </div>
+            <div class="sidebar-brand">Smart Gwa-dae</div>
             <ul class="sidebar-menu">
                 <li class="nav-item active" data-target="page-dashboard">📊 대시보드</li>
-                <li class="nav-item admin-only" data-target="page-students">🧑‍🎓 학생 명단</li>
+                <li class="nav-item" data-target="page-students">🧑‍🎓 학생 명단</li>
                 <li class="nav-item" data-target="page-settlement">💰 정산 내역</li>
                 <li class="nav-item" data-target="page-application">📝 행사 신청</li>
                 <li class="nav-item" data-target="page-manual">📁 업무 매뉴얼</li>
@@ -901,29 +869,6 @@
 
             <!-- 1. 대시보드 -->
             <section class="page-section active" id="page-dashboard">
-                <div class="content-box" style="margin-bottom: 1.5rem; border-left: 4px solid var(--accent-blue);">
-                    <div
-                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                        <h3 style="color: var(--primary-navy); margin: 0;">📢 학과 공지사항</h3>
-                        <button class="btn-edit admin-only" onclick="toggleNoticeEdit()" id="btnEditNotice">공지
-                            수정</button>
-                    </div>
-                    <div id="noticeDisplay" style="font-size: 0.95rem; color: var(--text-dark); line-height: 1.5;">
-                    </div>
-                    <div id="noticeEditArea" style="display: none; margin-top: 10px;">
-                        <textarea id="noticeEditor" class="form-control"
-                            style="width: 100%; min-height: 80px; resize: vertical; padding: 10px;"></textarea>
-                        <div style="text-align: right; margin-top: 10px;">
-                            <button class="btn-primary" onclick="saveNotice()" style="padding: 0.5rem 1rem;">저장</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="student-only" style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
-                    <div
-                        style="background-color: var(--primary-white); padding: 0.8rem 1.5rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); font-weight: 600; font-size: 0.95rem;">
-                        나의 현재 입금 상태 <span id="myPaymentStatus" class="status-badge" style="margin-left: 8px;"></span>
-                    </div>
-                </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
                     <h3 style="color: var(--text-dark);">⏳ 신청 마감 타이머</h3>
                     <button class="btn-primary admin-only" onclick="openTimerModal()">+ 타이머 추가</button>
@@ -935,7 +880,7 @@
                 <h3 style="color: var(--text-dark); margin-bottom: 1rem;">📈 학과 요약 현황</h3>
                 <div class="dashboard-cards">
                     <div class="card">
-                        <div class="card-title">목표 회비</div>
+                        <div class="card-title">목표 수금액 (과비)</div>
                         <div class="card-value" id="dashTarget">0 원</div>
                         <div class="card-subtext">1인당 <span id="dashFeeAmt">0</span>원 기준</div>
                     </div>
@@ -1019,19 +964,7 @@
                                 class="form-control" placeholder="예: 개강총회 다과"></div>
                         <div class="form-group"><label>금액 (원)</label><input type="number" id="expAmount"
                                 class="form-control" placeholder="0"></div>
-                        <div class="form-group">
-                            <label>증빙 첨부</label>
-                            <div style="display: flex; align-items: center; gap: 10px; margin-top: 5px;">
-                                <button type="button" onclick="document.getElementById('expReceipt').click()"
-                                    style="padding: 0.5rem 1rem; border: 1px solid var(--border-color); border-radius: 6px; background: white; cursor: pointer; font-size: 0.9rem;">파일
-                                    선택</button>
-                                <span id="expReceiptName" style="font-size: 0.85rem; color: gray;">선택된 파일 없음</span>
-                            </div>
-                            <input type="file" id="expReceipt" accept="image/*,.pdf" style="display: none;"
-                                onchange="document.getElementById('expReceiptName').textContent = this.files[0] ? this.files[0].name : '선택된 파일 없음'">
-                        </div>
-                        <button class="btn-primary" onclick="handleAddExpense()"
-                            style="height: 45px; align-self: flex-end;">지출 추가하기</button>
+                        <button class="btn-primary" onclick="handleAddExpense()" style="height: 45px;">지출 추가하기</button>
                     </div>
                 </div>
                 <div class="content-box" style="overflow-x: auto;">
@@ -1040,7 +973,6 @@
                             <tr>
                                 <th>날짜</th>
                                 <th>지출 항목</th>
-                                <th style="text-align: center;">첨부파일</th>
                                 <th style="text-align: right;">금액</th>
                                 <th class="admin-only" style="text-align: center;">관리</th>
                             </tr>
@@ -1056,12 +988,10 @@
                     <h2 style="text-align: center; margin-bottom: 0.5rem;">행사 및 공동구매 신청</h2>
                     <p style="text-align: center; color: var(--text-gray); margin-bottom: 2rem;">정보를 정확하게 입력해 주세요.</p>
                     <form id="appForm">
-                        <div class="admin-only">
-                            <label style="font-weight: 600; display:block; margin-bottom: 0.5rem;">학번</label>
-                            <input type="text" id="appStudentId" class="app-form-control">
-                            <label style="font-weight: 600; display:block; margin-bottom: 0.5rem;">이름</label>
-                            <input type="text" id="appName" class="app-form-control">
-                        </div>
+                        <label style="font-weight: 600; display:block; margin-bottom: 0.5rem;">학번</label>
+                        <input type="text" id="appStudentId" class="app-form-control" readonly>
+                        <label style="font-weight: 600; display:block; margin-bottom: 0.5rem;">이름</label>
+                        <input type="text" id="appName" class="app-form-control" readonly>
                         <label style="font-weight: 600; display:block; margin-bottom: 0.5rem;">신청 항목</label>
                         <!-- 드롭다운 메뉴가 JS를 통해 DB값으로 채워집니다 -->
                         <select id="appItem" class="app-form-control" required></select>
@@ -1264,6 +1194,33 @@
 
     <!-- 자바스크립트 통합부 -->
     <script>
+        // 1. Mock DB 선언 (신청 항목 리스트 포함)
+        const mockDatabase = {
+            system_config: { fee_per_student: 50000, target_amount: 150000 },
+            users: [{ user_id: 'admin', password: '1234', role: 'admin', name: '대표 관리자' }, { user_id: '20240001', password: '1234', role: 'student', name: '김철수' }],
+            students: [{ student_id: '20240001', name: '김철수', phone: '010-1234-5678', payment_status: '미입금' }, { student_id: '20240002', name: '이영희', phone: '010-2345-6789', payment_status: '확인중' }],
+            expenses: [{ expense_id: 1, expense_date: '2024-03-02', description: '개강총회', amount: 45000 }],
+
+            // 동적 신청 항목 데이터베이스
+            app_items: [
+                { id: 1, name: '과복 신청 (사이즈 M)' },
+                { id: 2, name: '과복 신청 (사이즈 L)' },
+                { id: 3, name: '1학기 전공교재 신청' },
+                { id: 4, name: 'MT/단합 대회 참가' }
+            ],
+
+            applications: [{ app_id: 1, student_id: '20240001', name: '김철수', item_name: '과복 신청 (사이즈 M)', applied_at: '2024-03-15 14:20' }],
+            timers: [{ id: 1, title: '과복 신청', deadline: new Date(Date.now() + 86400000 * 3).toISOString().slice(0, 16) }],
+            timeline: [{ id: 1, month: '3월', text: '▶ 신입생 오리엔테이션' }],
+            vendors: [{ id: 1, name: '스피드복사', phone: '02-123-4567', items: '현수막, 포스터', note: '할인 10%' }],
+            guide_content: "📌 **학생회비 관리 원칙**\n1. 영수증은 결제 직후 챙길 것.",
+
+            _nextIds: { expense: 2, app: 2, timer: 2, timeline: 2, vendor: 2, app_item: 5 }
+        };
+
+        const delay = ms => new Promise(res => setTimeout(res, ms));
+
+        // 2. 가상 API
         const BASE_URL = '';
         const api = {
             async login(id, pw) {
@@ -1277,11 +1234,7 @@
             },
             async fetchAllData() {
                 const res = await fetch(`${BASE_URL}/api/data`);
-                if (!res.ok) {
-                    let errText = "알 수 없는 에러";
-                    try { errText = await res.text(); } catch(e){}
-                    throw new Error(`HTTP ${res.status} - ${errText}`);
-                }
+                if (!res.ok) throw new Error("데이터 로드 실패");
                 return res.json();
             },
             async checkDuplicateId(id) {
@@ -1299,59 +1252,13 @@
                 if (!res.ok) throw new Error((await res.json()).message || "회원가입 실패");
                 return true;
             },
-            fileToBase64(file) {
-                return new Promise((resolve, reject) => {
-                    if (!file.type.match(/image.*/)) {
-                        const reader = new FileReader();
-                        reader.onload = () => resolve(reader.result);
-                        reader.onerror = reject;
-                        reader.readAsDataURL(file);
-                        return;
-                    }
-
-                    const reader = new FileReader();
-                    reader.onload = (readerEvent) => {
-                        const image = new Image();
-                        image.onload = () => {
-                            const canvas = document.createElement('canvas');
-                            let width = image.width;
-                            let height = image.height;
-                            
-                            const MAX_SIZE = 1200;
-                            if (width > height) {
-                                if (width > MAX_SIZE) {
-                                    height *= MAX_SIZE / width;
-                                    width = MAX_SIZE;
-                                }
-                            } else {
-                                if (height > MAX_SIZE) {
-                                    width *= MAX_SIZE / height;
-                                    height = MAX_SIZE;
-                                }
-                            }
-                            canvas.width = width;
-                            canvas.height = height;
-                            
-                            const ctx = canvas.getContext('2d');
-                            ctx.drawImage(image, 0, 0, width, height);
-                            
-                            const dataUrl = canvas.toDataURL('image/webp', 0.8);
-                            resolve(dataUrl);
-                        };
-                        image.onerror = reject;
-                        image.src = readerEvent.target.result;
-                    };
-                    reader.onerror = reject;
-                    reader.readAsDataURL(file);
-                });
-            },
             async updatePaymentStatus(id, status) {
                 const res = await fetch(`${BASE_URL}/api/students/payment`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ student_id: id, payment_status: status })
                 });
-                if (!res.ok) throw new Error("입금 상태 변경 실패");
+                if (!res.ok) throw new Error("상태 변경 실패");
                 return true;
             },
             async insertStudent(d) {
@@ -1363,11 +1270,6 @@
                 if (!res.ok) throw new Error((await res.json()).message || "학생 추가 실패");
                 return true;
             },
-            async deleteStudent(id) {
-                const res = await fetch(`${BASE_URL}/api/students/${encodeURIComponent(id)}`, { method: 'DELETE' });
-                if (!res.ok) throw new Error("학생 삭제 실패");
-                return true;
-            },
             async updateConfig(t, f) {
                 const res = await fetch(`${BASE_URL}/api/config`, {
                     method: 'POST',
@@ -1377,25 +1279,43 @@
                 if (!res.ok) throw new Error("설정 변경 실패");
                 return true;
             },
-            async insertExpense(d) {
-                let base64Image = null;
-                if (d.receipt_file) {
-                    base64Image = await new Promise((resolve, reject) => {
+            fileToBase64(file) {
+                return new Promise((resolve, reject) => {
+                    if (!file.type.match(/image.*/)) {
                         const reader = new FileReader();
                         reader.onload = () => resolve(reader.result);
-                        reader.onerror = error => reject(error);
-                        reader.readAsDataURL(d.receipt_file);
-                    });
-                }
+                        reader.onerror = reject;
+                        reader.readAsDataURL(file);
+                        return;
+                    }
+                    const reader = new FileReader();
+                    reader.onload = (readerEvent) => {
+                        const image = new Image();
+                        image.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            let width = image.width; let height = image.height;
+                            const MAX_SIZE = 1200;
+                            if (width > height) { if (width > MAX_SIZE) { height *= MAX_SIZE / width; width = MAX_SIZE; } } 
+                            else { if (height > MAX_SIZE) { width *= MAX_SIZE / height; height = MAX_SIZE; } }
+                            canvas.width = width; canvas.height = height;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(image, 0, 0, width, height);
+                            resolve(canvas.toDataURL('image/webp', 0.8));
+                        };
+                        image.onerror = reject;
+                        image.src = readerEvent.target.result;
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            },
+            async insertExpense(d) {
+                let base64Image = null;
+                if (d.receipt_file) base64Image = await this.fileToBase64(d.receipt_file);
                 const res = await fetch(`${BASE_URL}/api/expenses`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        expense_date: d.expense_date,
-                        description: d.description,
-                        amount: d.amount,
-                        receipt_image: base64Image
-                    })
+                    body: JSON.stringify({ amount: d.amount, description: d.description, receipt_image: base64Image })
                 });
                 if (!res.ok) {
                     let errText = "지출 추가 실패";
@@ -1405,7 +1325,7 @@
                 return true;
             },
             async deleteExpense(id) {
-                const res = await fetch(`${BASE_URL}/api/expenses/${id}`, { method: 'DELETE' });
+                const res = await fetch(`${BASE_URL}/api/expenses/${encodeURIComponent(id)}`, { method: 'DELETE' });
                 if (!res.ok) throw new Error("지출 삭제 실패");
                 return true;
             },
@@ -1415,15 +1335,11 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(d)
                 });
-                if (!res.ok) {
-                    const err = await res.json();
-                    if (err.message === "중복신청") throw new Error("중복신청");
-                    throw new Error("신청 실패");
-                }
+                if (!res.ok) throw new Error("신청 실패");
                 return true;
             },
             async deleteApplication(id) {
-                const res = await fetch(`${BASE_URL}/api/applications/${id}`, { method: 'DELETE' });
+                const res = await fetch(`${BASE_URL}/api/applications/${encodeURIComponent(id)}`, { method: 'DELETE' });
                 if (!res.ok) throw new Error("신청 취소 실패");
                 return true;
             },
@@ -1433,25 +1349,25 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ name })
                 });
-                if (!res.ok) throw new Error("신청 항목 추가 실패");
+                if (!res.ok) throw new Error("항목 추가 실패");
                 return true;
             },
             async deleteAppItem(id) {
-                const res = await fetch(`${BASE_URL}/api/app-items/${id}`, { method: 'DELETE' });
-                if (!res.ok) throw new Error("신청 항목 삭제 실패");
+                const res = await fetch(`${BASE_URL}/api/app-items/${encodeURIComponent(id)}`, { method: 'DELETE' });
+                if (!res.ok) throw new Error("항목 삭제 실패");
                 return true;
             },
             async saveTimer(d) {
                 const res = await fetch(`${BASE_URL}/api/timers`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(d)
+                    body: JSON.stringify({ title: d.title, deadline: d.deadline })
                 });
-                if (!res.ok) throw new Error("타이머 저장 실패");
+                if (!res.ok) throw new Error("타이머 추가 실패");
                 return true;
             },
             async deleteTimer(id) {
-                const res = await fetch(`${BASE_URL}/api/timers/${id}`, { method: 'DELETE' });
+                const res = await fetch(`${BASE_URL}/api/timers/${encodeURIComponent(id)}`, { method: 'DELETE' });
                 if (!res.ok) throw new Error("타이머 삭제 실패");
                 return true;
             },
@@ -1459,13 +1375,13 @@
                 const res = await fetch(`${BASE_URL}/api/timeline`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(d)
+                    body: JSON.stringify({ month: d.month, content: d.text })
                 });
-                if (!res.ok) throw new Error("일정 저장 실패");
+                if (!res.ok) throw new Error("일정 추가 실패");
                 return true;
             },
             async deleteTimeline(id) {
-                const res = await fetch(`${BASE_URL}/api/timeline/${id}`, { method: 'DELETE' });
+                const res = await fetch(`${BASE_URL}/api/timeline/${encodeURIComponent(id)}`, { method: 'DELETE' });
                 if (!res.ok) throw new Error("일정 삭제 실패");
                 return true;
             },
@@ -1475,11 +1391,11 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(d)
                 });
-                if (!res.ok) throw new Error("업체 저장 실패");
+                if (!res.ok) throw new Error("업체 추가 실패");
                 return true;
             },
             async deleteVendor(id) {
-                const res = await fetch(`${BASE_URL}/api/vendors/${id}`, { method: 'DELETE' });
+                const res = await fetch(`${BASE_URL}/api/vendors/${encodeURIComponent(id)}`, { method: 'DELETE' });
                 if (!res.ok) throw new Error("업체 삭제 실패");
                 return true;
             },
@@ -1487,23 +1403,20 @@
                 const res = await fetch(`${BASE_URL}/api/guide`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ content: t })
+                    body: JSON.stringify({ guide_content: t })
                 });
-                if (!res.ok) throw new Error("가이드 업데이트 실패");
-                return true;
-            },
-            async updateNotice(notice) {
-                const res = await fetch(`${BASE_URL}/api/config/notice`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ notice })
-                });
-                if (!res.ok) throw new Error("업데이트 실패");
+                if (!res.ok) throw new Error("가이드 변경 실패");
                 return true;
             }
         };
 
-        let localState = {}; let currentUser = null; let activePageId = 'page-dashboard'; let timerInterval = null; let currentEditId = null;
+        let localState = {}; 
+        let currentUser = null;
+        try {
+            const saved = localStorage.getItem('currentUser');
+            if (saved) currentUser = JSON.parse(saved);
+        } catch(e) {}
+        let activePageId = 'page-dashboard'; let timerInterval = null; let currentEditId = null;
 
         const formatMoney = num => new Intl.NumberFormat('ko-KR').format(num) + ' 원';
         const showLoading = () => document.getElementById('loadingOverlay').style.display = 'flex';
@@ -1527,6 +1440,7 @@
             e.preventDefault(); const id = document.getElementById('loginId').value.trim(); const pw = document.getElementById('loginPw').value; showLoading();
             try {
                 currentUser = await api.login(id, pw);
+                localStorage.setItem('currentUser', JSON.stringify(currentUser));
                 if (currentUser.role === 'admin') { document.body.classList.add('admin-mode'); document.getElementById('headerUserBadge').textContent = '관리자'; document.getElementById('headerUserBadge').classList.add('admin-badge'); document.getElementById('appTableTitle').textContent = '전체 학생 신청 내역 (관리자용)'; }
                 else { document.body.classList.remove('admin-mode'); document.getElementById('headerUserBadge').textContent = '학생'; document.getElementById('headerUserBadge').classList.remove('admin-badge'); document.getElementById('appTableTitle').textContent = '나의 신청 내역 조회'; document.getElementById('appStudentId').value = currentUser.student_id || currentUser.user_id; document.getElementById('appName').value = currentUser.name; }
                 document.getElementById('headerUserName').textContent = currentUser.name + '님'; document.getElementById('loginPage').style.display = 'none'; document.getElementById('appContainer').style.display = 'flex';
@@ -1534,7 +1448,7 @@
             } catch (err) { hideLoading(); showMessage(err.message); }
         });
 
-        function handleLogout() { showMessage("로그아웃 하시겠습니까?", "confirm", () => { currentUser = null; clearInterval(timerInterval); document.getElementById('loginForm').reset(); document.getElementById('appContainer').style.display = 'none'; document.getElementById('loginPage').style.display = 'flex'; document.querySelector('.nav-item[data-target="page-dashboard"]').click(); }); }
+        function handleLogout() { showMessage("로그아웃 하시겠습니까?", "confirm", () => { currentUser = null; localStorage.removeItem('currentUser'); clearInterval(timerInterval); document.getElementById('loginForm').reset(); document.getElementById('appContainer').style.display = 'none'; document.getElementById('loginPage').style.display = 'flex'; document.querySelector('.nav-item[data-target="page-dashboard"]').click(); }); }
 
         async function refreshDataAndUI() {
             try {
@@ -1544,13 +1458,11 @@
                 const comp = localState.students.filter(s => s.payment_status === '완료').length; const notp = localState.students.filter(s => s.payment_status === '미입금').length; const pend = localState.students.filter(s => s.payment_status === '확인중').length;
                 const depAmt = comp * fee; const totExp = localState.expenses.reduce((s, e) => s + e.amount, 0); const bal = depAmt - totExp; const dRate = targetAmt === 0 ? 0 : (depAmt / targetAmt) * 100;
 
-                document.getElementById('noticeDisplay').innerHTML = (localState.system_config.notice || '등록된 공지사항이 없습니다.').replace(/\n/g, '<br>');
-
                 // 1. 대시보드 및 정산
                 document.getElementById('dashFeeAmt').textContent = new Intl.NumberFormat('ko-KR').format(fee); document.getElementById('dashTarget').textContent = formatMoney(targetAmt); document.getElementById('dashDeposited').textContent = formatMoney(depAmt); document.getElementById('dashDepositRate').textContent = `달성률: ${dRate.toFixed(1)}%`; document.getElementById('dashBalance').textContent = formatMoney(bal); document.getElementById('dashExpense').textContent = `총 지출: ${formatMoney(totExp)}`; document.getElementById('dashPending').textContent = `${notp + pend} 명`; document.getElementById('dashPendingSub').textContent = `미입금 ${notp}명 / 확인중 ${pend}명`;
-                document.getElementById('studentTableBody').innerHTML = localState.students.map(s => `<tr><td>${s.student_id}</td><td>${s.name}</td><td>${s.phone}</td><td><span class="status-badge status-${s.payment_status === '완료' ? 'done' : s.payment_status === '확인중' ? 'pending' : 'none'}">${s.payment_status}</span></td><td class="admin-only" style="text-align:center;"><button class="btn-edit" onclick="openEditStudent('${s.student_id}')">수정</button><button class="btn-delete" style="margin-left:5px;" onclick="handleDeleteStudent('${s.student_id}')">삭제</button></td></tr>`).join('');
+                document.getElementById('studentTableBody').innerHTML = localState.students.map(s => `<tr><td>${s.student_id}</td><td>${s.name}</td><td>${s.phone}</td><td><span class="status-badge status-${s.payment_status === '완료' ? 'done' : s.payment_status === '확인중' ? 'pending' : 'none'}">${s.payment_status}</span></td><td class="admin-only" style="text-align:center;"><button class="btn-edit" onclick="openEditStudent('${s.student_id}')">수정</button></td></tr>`).join('');
                 document.getElementById('settleTotalIncome').textContent = formatMoney(depAmt); document.getElementById('settleTotalExpense').textContent = formatMoney(totExp); document.getElementById('settleBalance').textContent = formatMoney(bal); document.getElementById('settlementProgressText').textContent = `${dRate.toFixed(1)}%`; document.getElementById('settlementProgressBar').style.width = `${Math.min(dRate, 100)}%`;
-                document.getElementById('expenseTableBody').innerHTML = localState.expenses.sort((a, b) => new Date(b.expense_date) - new Date(a.expense_date)).map(e => `<tr><td>${e.expense_date.split('T')[0]}</td><td>${e.description}</td><td style="text-align:center;">${e.receipt_image ? `<a href="${e.receipt_image}" target="_blank"><img src="${e.receipt_image}" style="max-height: 40px; max-width: 60px; border-radius: 4px; border: 1px solid #ddd; object-fit: cover;" alt="영수증"></a>` : '<span style="color:#ccc; font-size:0.8rem;">없음</span>'}</td><td style="text-align:right; color:var(--accent-red); font-weight:600;">-${formatMoney(e.amount)}</td><td class="admin-only" style="text-align:center;"><button class="btn-delete" onclick="handleDeleteExpense(${e.expense_id})">삭제</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:gray;">내역 없음</td></tr>`;
+                document.getElementById('expenseTableBody').innerHTML = localState.expenses.sort((a, b) => new Date(b.expense_date) - new Date(a.expense_date)).map(e => `<tr><td>${e.expense_date}</td><td>${e.description}</td><td style="text-align:right; color:var(--accent-red); font-weight:600;">-${formatMoney(e.amount)}</td><td class="admin-only" style="text-align:center;"><button class="btn-delete" onclick="handleDeleteExpense(${e.expense_id})">삭제</button></td></tr>`).join('') || `<tr><td colspan="4" style="text-align:center;color:gray;">내역 없음</td></tr>`;
 
                 // 2. 신청 파트 (동적 드롭다운 렌더링)
                 document.getElementById('appItem').innerHTML = '<option value="" disabled selected>항목 선택</option>' + localState.app_items.map(i => `<option value="${i.name}">${i.name}</option>`).join('');
@@ -1560,25 +1472,15 @@
                 }
 
                 let dApps = currentUser.role === 'admin' ? localState.applications : localState.applications.filter(a => a.student_id === (currentUser.student_id || currentUser.user_id));
-                document.getElementById('applicationTableBody').innerHTML = dApps.sort((a, b) => new Date(b.applied_at) - new Date(a.applied_at)).map(a => `<tr><td style="font-size:0.85rem;color:gray;">${a.applied_at}</td><td>${a.student_id}</td><td style="font-weight:600;">${a.name}</td><td style="color:var(--accent-blue);">${a.app_item}</td><td style="text-align:center;"><button class="btn-delete" onclick="handleDeleteApplication(${a.id})">취소(삭제)</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:gray;">신청 내역 없음</td></tr>`;
+                document.getElementById('applicationTableBody').innerHTML = dApps.sort((a, b) => new Date(b.applied_at) - new Date(a.applied_at)).map(a => `<tr><td style="font-size:0.85rem;color:gray;">${a.applied_at}</td><td>${a.student_id}</td><td style="font-weight:600;">${a.name}</td><td style="color:var(--accent-blue);">${a.item_name}</td><td style="text-align:center;"><button class="btn-delete" onclick="handleDeleteApplication(${a.app_id})">취소(삭제)</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:gray;">신청 내역 없음</td></tr>`;
 
                 // 3. 매뉴얼
-                document.getElementById('timelineContainer').innerHTML = localState.timeline.map(t => `<div class="timeline-item"><div class="timeline-month">${t.month} <div class="admin-only" style="display:inline-block;"><button class="btn-edit" onclick="openTimelineModal(${t.id})">수정</button><button class="btn-delete" onclick="handleDeleteTimeline(${t.id})">삭제</button></div></div><div class="timeline-desc"><p>${(t.content||'').replace(/\n/g, '<br>')}</p></div></div>`).join('');
+                document.getElementById('timelineContainer').innerHTML = localState.timeline.map(t => `<div class="timeline-item"><div class="timeline-month">${t.month} <div class="admin-only" style="display:inline-block;"><button class="btn-edit" onclick="openTimelineModal(${t.id})">수정</button><button class="btn-delete" onclick="handleDeleteTimeline(${t.id})">삭제</button></div></div><div class="timeline-desc"><p>${t.text.replace(/\n/g, '<br>')}</p></div></div>`).join('');
                 document.getElementById('vendorTableBody').innerHTML = localState.vendors.map(v => `<tr><td style="font-weight:bold;color:var(--primary-navy)">${v.name}</td><td>${v.phone}</td><td>${v.items}</td><td style="font-size:0.85rem;color:gray;">${v.note}</td><td class="admin-only" style="text-align:center;"><button class="btn-edit" onclick="openVendorModal(${v.id})">수정</button><button class="btn-delete" onclick="handleDeleteVendor(${v.id})">삭제</button></td></tr>`).join('');
-                document.getElementById('guideDisplay').innerHTML = (localState.guide||'').replace(/\n/g, '<br>'); document.getElementById('guideEditor').value = (localState.guide||'');
-
-                // 학생 본인 입금 상태 업데이트
-                if (currentUser && currentUser.role !== 'admin') {
-                    const myInfo = localState.students.find(s => s.student_id === (currentUser.student_id || currentUser.user_id));
-                    if (myInfo) {
-                        const sBadge = document.getElementById('myPaymentStatus');
-                        sBadge.textContent = myInfo.payment_status;
-                        sBadge.className = `status-badge status-${myInfo.payment_status === '완료' ? 'done' : myInfo.payment_status === '확인중' ? 'pending' : 'none'}`;
-                    }
-                }
+                document.getElementById('guideDisplay').innerHTML = localState.guide_content.replace(/\n/g, '<br>'); document.getElementById('guideEditor').value = localState.guide_content;
 
                 startTimers();
-            } catch (e) { showMessage("데이터 로드 실패: " + e.message); console.error(e); } finally { hideLoading(); }
+            } catch (e) { showMessage("데이터 로드 실패"); } finally { hideLoading(); }
         }
 
         function startTimers() {
@@ -1593,32 +1495,15 @@
         function openTab(id, btn) { document.querySelectorAll('.tab-content, .tab-btn').forEach(el => el.classList.remove('active')); document.getElementById(id).classList.add('active'); btn.classList.add('active'); }
         function toggleGuideEdit() { const d = document.getElementById('guideDisplay'), e = document.getElementById('guideEditArea'), b = document.getElementById('btnEditGuide'); if (e.style.display === 'none') { d.style.display = 'none'; e.style.display = 'block'; b.style.display = 'none'; } else { d.style.display = 'block'; e.style.display = 'none'; b.style.display = 'inline-block'; document.getElementById('guideEditor').value = localState.guide_content; } }
         async function saveGuide() { showLoading(); try { await api.updateGuide(document.getElementById('guideEditor').value); await refreshDataAndUI(); toggleGuideEdit(); showMessage('가이드 저장 완료'); } catch (e) { hideLoading(); } }
-        function toggleNoticeEdit() { const d = document.getElementById('noticeDisplay'), e = document.getElementById('noticeEditArea'), b = document.getElementById('btnEditNotice'); if (e.style.display === 'none') { d.style.display = 'none'; e.style.display = 'block'; b.style.display = 'none'; document.getElementById('noticeEditor').value = localState.system_config.notice || ''; } else { d.style.display = 'block'; e.style.display = 'none'; b.style.display = 'inline-block'; } }
-        async function saveNotice() { showLoading(); try { await api.updateNotice(document.getElementById('noticeEditor').value); await refreshDataAndUI(); toggleNoticeEdit(); showMessage('공지사항 저장 완료'); } catch (e) { hideLoading(); } }
 
         // CRUD (학생, 정산)
         function openEditStudent(id) { currentEditId = id; const s = localState.students.find(x => x.student_id === id); document.getElementById('editStudentName').textContent = `${s.student_id} ${s.name}`; document.getElementById('editStudentStatus').value = s.payment_status; document.getElementById('editStudentModal').style.display = 'flex'; }
         async function handleSaveStudentStatus() { closeModal('editStudentModal'); showLoading(); try { await api.updatePaymentStatus(currentEditId, document.getElementById('editStudentStatus').value); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
         function openAddStudentModal() { document.getElementById('addStdId').value = ''; document.getElementById('addStdName').value = ''; document.getElementById('addStdPhone').value = ''; document.getElementById('addStudentModal').style.display = 'flex'; }
         async function handleAddStudent() { const id = document.getElementById('addStdId').value, n = document.getElementById('addStdName').value, p = document.getElementById('addStdPhone').value; if (!id || !n) return showMessage('학번/이름 필수'); closeModal('addStudentModal'); showLoading(); try { await api.insertStudent({ student_id: id, name: n, phone: p, payment_status: '미입금' }); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
-        function handleDeleteStudent(id) { showMessage('해당 학생을 정말 삭제하시겠습니까?', 'confirm', async () => { showLoading(); try { await api.deleteStudent(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
         function openConfigModal() { document.getElementById('configTarget').value = localState.system_config.target_amount || (localState.students.length * localState.system_config.fee_per_student); document.getElementById('configFee').value = localState.system_config.fee_per_student; document.getElementById('configModal').style.display = 'flex'; }
         async function handleSaveConfig() { const t = parseInt(document.getElementById('configTarget').value), f = parseInt(document.getElementById('configFee').value); if (isNaN(t) || isNaN(f)) return showMessage('금액 오류'); closeModal('configModal'); showLoading(); try { await api.updateConfig(t, f); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
-        async function handleAddExpense() {
-            const dt = document.getElementById('expDate').value;
-            const ds = document.getElementById('expDesc').value.trim();
-            const am = parseInt(document.getElementById('expAmount').value, 10);
-            const receiptFile = document.getElementById('expReceipt').files[0];
-            if (!dt || !ds || isNaN(am)) return showMessage("날짜, 지출 항목, 금액을 모두 입력해주세요.");
-
-            showLoading();
-            try {
-                await api.insertExpense({ expense_date: dt, description: ds, amount: am, receipt_file: receiptFile });
-                document.getElementById('expDate').value = ''; document.getElementById('expDesc').value = ''; document.getElementById('expAmount').value = ''; document.getElementById('expReceipt').value = '';
-                document.getElementById('expReceiptName').textContent = '선택된 파일 없음';
-                await refreshDataAndUI();
-            } catch (e) { showMessage(e.message); } finally { hideLoading(); }
-        }
+        async function handleAddExpense() { const d = document.getElementById('expDate').value, desc = document.getElementById('expDesc').value, amt = parseInt(document.getElementById('expAmount').value); if (!d || !desc || isNaN(amt)) return showMessage('입력 오류'); showLoading(); try { await api.insertExpense({ expense_date: d, description: desc, amount: amt }); document.getElementById('expDesc').value = ''; document.getElementById('expAmount').value = ''; await refreshDataAndUI(); } catch (e) { hideLoading(); } }
         function handleDeleteExpense(id) { showMessage('삭제하시겠습니까?', 'confirm', async () => { showLoading(); try { await api.deleteExpense(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
 
         // CRUD (신청)
@@ -1643,11 +1528,21 @@
         document.getElementById('studentSearch').addEventListener('input', e => document.querySelectorAll('#studentTableBody tr').forEach(r => r.style.display = r.textContent.toLowerCase().includes(e.target.value.toLowerCase()) ? '' : 'none'));
         document.getElementById('vendorSearch').addEventListener('input', e => document.querySelectorAll('#vendorTableBody tr').forEach(r => r.style.display = r.textContent.toLowerCase().includes(e.target.value.toLowerCase()) ? '' : 'none'));
 
-        window.onload = () => document.getElementById('expDate').value = new Date().toISOString().split('T')[0];
+        window.onload = async () => { 
+            document.getElementById('expDate').value = new Date().toISOString().split('T')[0]; 
+            if (currentUser) {
+                document.getElementById('loginPage').style.display = 'none';
+                document.getElementById('appContainer').style.display = 'flex';
+                if (currentUser.role === 'admin') { document.body.classList.add('admin-mode'); document.getElementById('headerUserBadge').textContent = '관리자'; document.getElementById('headerUserBadge').classList.add('admin-badge'); document.getElementById('appTableTitle').textContent = '전체 학생 신청 내역 (관리자용)'; }
+                else { document.body.classList.remove('admin-mode'); document.getElementById('headerUserBadge').textContent = '학생'; document.getElementById('headerUserBadge').classList.remove('admin-badge'); document.getElementById('appTableTitle').textContent = '나의 신청 내역 조회'; document.getElementById('appStudentId').value = currentUser.student_id || currentUser.user_id; document.getElementById('appName').value = currentUser.name; }
+                document.getElementById('headerUserName').textContent = currentUser.name + '님';
+                showLoading();
+                try { await refreshDataAndUI(); } catch(e) {}
+                hideLoading();
+            }
+        };
         window.onclick = e => { if (e.target.classList.contains('modal-overlay')) e.target.style.display = 'none'; };
     </script>
 </body>
 
 </html>
-<!-- Re-deploy with correct author -->
-
