@@ -11,26 +11,4 @@ const pool = mysql.createPool({
     queueLimit: 0
 });
 
-async function initDB() {
-    const connection = await pool.getConnection();
-    try {
-        await connection.query(`
-            CREATE TABLE IF NOT EXISTS expenses (
-                expense_id INT AUTO_INCREMENT PRIMARY KEY,
-                expense_date VARCHAR(50) NOT NULL,
-                description VARCHAR(255) NOT NULL,
-                amount INT NOT NULL,
-                receipt_image LONGTEXT
-            )
-        `);
-    } catch (error) {
-        console.error('DB Initialization Error:', error);
-    } finally {
-        connection.release();
-    }
-}
-
-// 초기화 실행
-initDB();
-
 module.exports = pool;

@@ -1277,7 +1277,11 @@
             },
             async fetchAllData() {
                 const res = await fetch(`${BASE_URL}/api/data`);
-                if (!res.ok) throw new Error("데이터를 가져오는 데 실패했습니다.");
+                if (!res.ok) {
+                    let errText = "알 수 없는 에러";
+                    try { errText = await res.text(); } catch(e){}
+                    throw new Error(`HTTP ${res.status} - ${errText}`);
+                }
                 return res.json();
             },
             async checkDuplicateId(id) {
@@ -1524,7 +1528,7 @@
                 }
 
                 startTimers();
-            } catch (e) { showMessage("데이터 로드 실패"); } finally { hideLoading(); }
+            } catch (e) { showMessage("데이터 로드 실패: " + e.message); console.error(e); } finally { hideLoading(); }
         }
 
         function startTimers() {
