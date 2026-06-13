@@ -852,7 +852,7 @@
                 <span>과대 zip</span>
             </div>
             <form id="loginForm">
-                <input type="text" id="loginId" class="login-input" placeholder="아이디 (학번 또는 admin)" required>
+                <input type="text" id="loginId" class="login-input" placeholder="아이디 (학번입력)" required>
                 <input type="password" id="loginPw" class="login-input" placeholder="비밀번호" required>
                 <button type="submit" class="btn-login">로그인</button>
                 <button type="button" class="btn-signup" onclick="openSignupModal()">회원가입</button>
@@ -909,9 +909,12 @@
                         </div>
                     </div>
                 </div>
-                <div class="student-only" style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
-                    <div style="background-color: var(--primary-white); padding: 0.8rem 1.5rem; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); font-weight: 600; font-size: 0.95rem;">
-                        나의 현재 입금 상태 <span id="myPaymentStatus" class="status-badge" style="margin-left: 8px;"></span>
+                <div class="student-only content-box" style="margin-bottom: 1.5rem;">
+                    <h3 style="color: var(--primary-navy); margin-top: 0; margin-bottom: 1rem; font-size: 1rem;">💳 나의 입금 상태 확인</h3>
+                    <div style="display: flex; gap: 10px; text-align: center;">
+                        <div id="statusStepNone" style="flex: 1; padding: 0.8rem; border-radius: 8px; font-weight: 600; color: #a0aec0; background-color: #f7fafc; transition: all 0.3s; border: 1px solid transparent;">미입금</div>
+                        <div id="statusStepPending" style="flex: 1; padding: 0.8rem; border-radius: 8px; font-weight: 600; color: #a0aec0; background-color: #f7fafc; transition: all 0.3s; border: 1px solid transparent;">확인중</div>
+                        <div id="statusStepDone" style="flex: 1; padding: 0.8rem; border-radius: 8px; font-weight: 600; color: #a0aec0; background-color: #f7fafc; transition: all 0.3s; border: 1px solid transparent;">입금 완료</div>
                     </div>
                 </div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
@@ -1386,9 +1389,12 @@
                 if(currentUser && currentUser.role !== 'admin') {
                     const myInfo = localState.students.find(s => s.student_id === (currentUser.student_id || currentUser.user_id));
                     if(myInfo) {
-                        const sBadge = document.getElementById('myPaymentStatus');
-                        sBadge.textContent = myInfo.payment_status;
-                        sBadge.className = 'status-badge status-' + (myInfo.payment_status === '완료' ? 'done' : myInfo.payment_status === '확인중' ? 'pending' : 'none');
+                        const st = myInfo.payment_status;
+                        const n = document.getElementById('statusStepNone'), p = document.getElementById('statusStepPending'), d = document.getElementById('statusStepDone');
+                        [n, p, d].forEach(el => { el.style.backgroundColor = '#f7fafc'; el.style.color = '#a0aec0'; el.style.boxShadow = 'none'; el.style.borderColor = 'transparent'; });
+                        if(st === '미입금') { n.style.backgroundColor = '#ffeef0'; n.style.color = 'var(--accent-red)'; n.style.boxShadow = '0 2px 8px rgba(231, 76, 60, 0.2)'; n.style.borderColor = 'var(--accent-red)'; }
+                        else if(st === '확인중') { p.style.backgroundColor = '#fff8e1'; p.style.color = 'var(--accent-yellow)'; p.style.boxShadow = '0 2px 8px rgba(241, 196, 15, 0.2)'; p.style.borderColor = 'var(--accent-yellow)'; }
+                        else if(st === '완료') { d.style.backgroundColor = '#eefdf4'; d.style.color = 'var(--accent-green)'; d.style.boxShadow = '0 2px 8px rgba(46, 204, 113, 0.2)'; d.style.borderColor = 'var(--accent-green)'; }
                     }
                 }
                 document.getElementById('dashFeeAmt').textContent = new Intl.NumberFormat('ko-KR').format(fee); document.getElementById('dashTarget').textContent = formatMoney(targetAmt); document.getElementById('dashDeposited').textContent = formatMoney(depAmt); document.getElementById('dashDepositRate').textContent = `달성률: ${dRate.toFixed(1)}%`; document.getElementById('dashBalance').textContent = formatMoney(bal); document.getElementById('dashExpense').textContent = `총 지출: ${formatMoney(totExp)}`; document.getElementById('dashPending').textContent = `${notp + pend} 명`; document.getElementById('dashPendingSub').textContent = `미입금 ${notp}명 / 확인중 ${pend}명`;
