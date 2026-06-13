@@ -4,7 +4,7 @@ const pool = mysql.createPool({
     host: 'ls-4e4dad401c6fd5d78db464e70e344bdccdec3271.cwz7kssqdnuy.ap-northeast-2.rds.amazonaws.com',
     user: 'poly',
     password: 'poly1234!',
-    // database: 'poly', // 자동으로 생성하기 위해 제거
+    database: 'smart-gwa-dae',
     port: 3306,
     waitForConnections: true,
     connectionLimit: 10,

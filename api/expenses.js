@@ -12,7 +12,7 @@ module.exports = async function handler(req, res) {
             return res.status(400).json({ message: '필수 값이 누락되었습니다.' });
         }
 
-        const query = 'INSERT INTO poly.expenses (expense_date, description, amount, receipt_image) VALUES (?, ?, ?, ?)';
+        const query = 'INSERT INTO expenses (expense_date, description, amount, receipt_image) VALUES (?, ?, ?, ?)';
         const values = [expense_date, description, amount, receipt_image || null];
 
         await pool.query(query, values);
