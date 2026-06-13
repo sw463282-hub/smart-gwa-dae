@@ -12,7 +12,7 @@ module.exports = async function handler(req, res) {
             return res.status(400).json({ message: '삭제할 지출 내역의 ID가 필요합니다.' });
         }
 
-        const query = 'DELETE FROM expenses WHERE expense_id = ?';
+        const query = 'DELETE FROM poly.expenses WHERE expense_id = ?';
         await pool.query(query, [id]);
 
         res.status(200).json({ message: '지출 내역이 성공적으로 삭제되었습니다.' });
