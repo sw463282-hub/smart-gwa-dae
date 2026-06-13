@@ -1299,6 +1299,52 @@
                 if (!res.ok) throw new Error((await res.json()).message || "회원가입 실패");
                 return true;
             },
+            fileToBase64(file) {
+                return new Promise((resolve, reject) => {
+                    if (!file.type.match(/image.*/)) {
+                        const reader = new FileReader();
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = reject;
+                        reader.readAsDataURL(file);
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = (readerEvent) => {
+                        const image = new Image();
+                        image.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            let width = image.width;
+                            let height = image.height;
+                            
+                            const MAX_SIZE = 1200;
+                            if (width > height) {
+                                if (width > MAX_SIZE) {
+                                    height *= MAX_SIZE / width;
+                                    width = MAX_SIZE;
+                                }
+                            } else {
+                                if (height > MAX_SIZE) {
+                                    width *= MAX_SIZE / height;
+                                    height = MAX_SIZE;
+                                }
+                            }
+                            canvas.width = width;
+                            canvas.height = height;
+                            
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(image, 0, 0, width, height);
+                            
+                            const dataUrl = canvas.toDataURL('image/webp', 0.8);
+                            resolve(dataUrl);
+                        };
+                        image.onerror = reject;
+                        image.src = readerEvent.target.result;
+                    };
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                });
+            },
             async updatePaymentStatus(id, status) {
                 const res = await fetch(`${BASE_URL}/api/students/payment`, {
                     method: 'POST',
@@ -1351,7 +1397,11 @@
                         receipt_image: base64Image
                     })
                 });
-                if (!res.ok) throw new Error("지출 추가 실패");
+                if (!res.ok) {
+                    let errText = "지출 추가 실패";
+                    try { errText = (await res.json()).message || errText; } catch(e){}
+                    throw new Error(errText);
+                }
                 return true;
             },
             async deleteExpense(id) {
