@@ -5,6 +5,10 @@ module.exports = async function handler(req, res) {
         return res.status(405).json({ message: 'Method Not Allowed' });
     }
 
+    res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
+    res.setHeader('Expires', '0');
+    res.setHeader('Surrogate-Control', 'no-store');
+
     try {
         if (req.query.reset === 'true') {
             await pool.query('DROP TABLE IF EXISTS users, students, expenses, applications, app_items, timers, timeline, vendors, system_config');
@@ -75,7 +79,6 @@ module.exports = async function handler(req, res) {
                 note TEXT
             )
         `);
-        await pool.query(`DROP TABLE IF EXISTS system_config`);
         await pool.query(`
             CREATE TABLE IF NOT EXISTS system_config (
                 config_id INT PRIMARY KEY DEFAULT 1,
