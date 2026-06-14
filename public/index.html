@@ -955,7 +955,10 @@
                 <div class="content-box">
                     <div class="action-bar">
                         <input type="text" class="search-box" id="studentSearch" placeholder="이름 또는 학번으로 검색...">
-                        <button class="btn-primary admin-only" onclick="openAddStudentModal()">+ 학생 추가</button>
+                        <div style="display:flex; gap:10px;">
+                            <button class="btn-primary admin-only" style="background-color: var(--accent-yellow); color: var(--text-dark); border: none;" onclick="openBulkEditStudentModal()">상태 일괄 변경</button>
+                            <button class="btn-primary admin-only" onclick="openAddStudentModal()">+ 학생 추가</button>
+                        </div>
                     </div>
                     <div style="overflow-x: auto;">
                         <table id="studentTable">
@@ -1183,6 +1186,21 @@
                     onclick="handleSaveStudentStatus()">저장</button></div>
         </div>
     </div>
+    <div class="modal-overlay" id="bulkEditStudentModal">
+        <div class="modal-content">
+            <h2 class="modal-title">전체 학생 상태 일괄 변경</h2>
+            <p style="font-size: 0.9rem; color: var(--text-gray); margin-bottom: 1rem;">모든 학생의 입금 상태를 일괄 변경합니다. 정말 진행하시겠습니까?</p>
+            <select id="bulkEditStudentStatus" class="app-form-control">
+                <option value="미입금">미입금 (전체 초기화)</option>
+                <option value="확인중">확인중</option>
+                <option value="완료">완료</option>
+            </select>
+            <div class="modal-actions">
+                <button class="btn-cancel" onclick="closeModal('bulkEditStudentModal')">취소</button>
+                <button class="btn-confirm" style="background:var(--accent-red)" onclick="handleBulkSaveStudentStatus()">일괄 변경</button>
+            </div>
+        </div>
+    </div>
     <div class="modal-overlay" id="addStudentModal">
         <div class="modal-content">
             <h2 class="modal-title">학생 추가</h2><input type="text" id="addStdId" class="app-form-control"
@@ -1299,6 +1317,7 @@
             },
             async checkDuplicateId(id) { return (await this.callAction('checkId', { id })).exists; },
             async updatePaymentStatus(id, status) { return await this.callAction('updatePayment', { id, status }); },
+            async updateAllPaymentStatus(status) { return await this.callAction('updateAllPayment', { status }); },
             async insertStudent(d) { return await this.callAction('saveStudent', d); },
             async deleteStudent(id) { return await this.callAction('deleteStudent', { id }); },
             async updateConfig(t, f) { return await this.callAction('saveConfig', { target_amount: t, fee_per_student: f }); },
@@ -1455,6 +1474,8 @@
         // CRUD (학생, 정산)
         function openEditStudent(id) { currentEditId = id; const s = localState.students.find(x => x.student_id === id); document.getElementById('editStudentName').textContent = `${s.student_id} ${s.name}`; document.getElementById('editStudentStatus').value = s.payment_status; document.getElementById('editStudentModal').style.display = 'flex'; }
         async function handleSaveStudentStatus() { closeModal('editStudentModal'); showLoading(); try { await api.updatePaymentStatus(currentEditId, document.getElementById('editStudentStatus').value); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
+        function openBulkEditStudentModal() { document.getElementById('bulkEditStudentStatus').value = '미입금'; document.getElementById('bulkEditStudentModal').style.display = 'flex'; }
+        async function handleBulkSaveStudentStatus() { closeModal('bulkEditStudentModal'); showLoading(); try { await api.updateAllPaymentStatus(document.getElementById('bulkEditStudentStatus').value); await refreshDataAndUI(); showMessage('모든 학생의 상태가 일괄 변경되었습니다.'); } catch (e) { hideLoading(); } }
         function openAddStudentModal() { document.getElementById('addStdId').value = ''; document.getElementById('addStdName').value = ''; document.getElementById('addStdPhone').value = ''; document.getElementById('addStudentModal').style.display = 'flex'; }
         async function handleAddStudent() { const id = document.getElementById('addStdId').value, n = document.getElementById('addStdName').value, p = document.getElementById('addStdPhone').value; if (!id || !n) return showMessage('학번/이름 필수'); closeModal('addStudentModal'); showLoading(); try { await api.insertStudent({ student_id: id, name: n, phone: p, payment_status: '미입금' }); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
         function handleDeleteStudent(id) { showMessage('학생을 명단에서 삭제하시겠습니까?', 'confirm', async () => { showLoading(); try { await api.deleteStudent(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }

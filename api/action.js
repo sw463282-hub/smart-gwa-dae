@@ -44,6 +44,10 @@ module.exports = async function handler(req, res) {
                 await pool.query('UPDATE students SET payment_status = ? WHERE student_id = ?', [payload.status, payload.id]);
                 return res.status(200).json({ message: '수정 완료' });
             }
+            case 'updateAllPayment': {
+                await pool.query('UPDATE students SET payment_status = ?', [payload.status]);
+                return res.status(200).json({ message: '전체 수정 완료' });
+            }
             case 'saveApplication': {
                 const { student_id, name, item_name } = payload;
                 if (!student_id || !name || !item_name) return res.status(400).json({ message: '필수 값이 누락되었습니다.' });
