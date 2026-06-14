@@ -1389,7 +1389,7 @@
             } catch (err) { hideLoading(); showMessage(err.message); }
         });
 
-        function handleLogout() { showMessage("로그아웃 하시겠습니까?", "confirm", () => { currentUser = null; localStorage.removeItem('currentUser'); clearInterval(timerInterval); document.getElementById('loginForm').reset(); document.getElementById('appContainer').style.display = 'none'; document.getElementById('loginPage').style.display = 'flex'; document.querySelector('.nav-item[data-target="page-dashboard"]').click(); }); }
+        function handleLogout() { showMessage("로그아웃 하시겠습니까?", "confirm", () => { currentUser = null; localStorage.removeItem('currentUser'); sessionStorage.removeItem('lastActivePageId'); clearInterval(timerInterval); document.getElementById('loginForm').reset(); document.getElementById('appContainer').style.display = 'none'; document.getElementById('loginPage').style.display = 'flex'; document.querySelector('.nav-item[data-target="page-dashboard"]').click(); }); }
 
         async function refreshDataAndUI() {
             try {
@@ -1444,7 +1444,7 @@
         }
 
         // 네비게이션 & 토글
-        document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', e => { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); e.currentTarget.classList.add('active'); activePageId = e.currentTarget.getAttribute('data-target'); document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active')); document.getElementById(activePageId).classList.add('active'); document.getElementById('mainTitle').textContent = e.currentTarget.textContent.replace(/[^\uAC00-\uD7A3\s]/g, '').trim(); document.getElementById('btnExcel').style.display = (currentUser?.role === 'admin' && (activePageId === 'page-students' || activePageId === 'page-settlement')) ? 'block' : 'none'; document.getElementById('sidebar').classList.remove('open'); }));
+        document.querySelectorAll('.nav-item').forEach(item => item.addEventListener('click', e => { document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); e.currentTarget.classList.add('active'); activePageId = e.currentTarget.getAttribute('data-target'); sessionStorage.setItem('lastActivePageId', activePageId); document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active')); document.getElementById(activePageId).classList.add('active'); document.getElementById('mainTitle').textContent = e.currentTarget.textContent.replace(/[^\uAC00-\uD7A3\s]/g, '').trim(); document.getElementById('btnExcel').style.display = (currentUser?.role === 'admin' && (activePageId === 'page-students' || activePageId === 'page-settlement')) ? 'block' : 'none'; document.getElementById('sidebar').classList.remove('open'); }));
         function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
         function openTab(id, btn) { document.querySelectorAll('.tab-content, .tab-btn').forEach(el => el.classList.remove('active')); document.getElementById(id).classList.add('active'); btn.classList.add('active'); }
         function toggleNoticeEdit() { const d = document.getElementById('noticeDisplay'), e = document.getElementById('noticeEditArea'), b = document.getElementById('btnEditNotice'); if (e.style.display === 'none') { d.style.display = 'none'; e.style.display = 'block'; b.style.display = 'none'; document.getElementById('noticeEditor').value = localState.system_config.notice || ''; } else { d.style.display = 'block'; e.style.display = 'none'; b.style.display = 'inline-block'; } }
@@ -1493,7 +1493,7 @@
                 else { document.body.classList.remove('admin-mode'); document.getElementById('headerUserBadge').textContent = '학생'; document.getElementById('headerUserBadge').classList.remove('admin-badge'); document.getElementById('appTableTitle').textContent = '나의 신청 내역 조회'; document.getElementById('appStudentId').readOnly = true; document.getElementById('appName').readOnly = true; document.getElementById('appStudentId').value = currentUser.student_id || currentUser.user_id; document.getElementById('appName').value = currentUser.name; }
                 document.getElementById('headerUserName').textContent = currentUser.name + '님';
                 showLoading();
-                try { await refreshDataAndUI(); } catch(e) {}
+                try { await refreshDataAndUI(); const lastPage = sessionStorage.getItem('lastActivePageId'); if (lastPage) { const targetNav = document.querySelector(`.nav-item[data-target="${lastPage}"]`); if (targetNav && targetNav.style.display !== 'none') targetNav.click(); } } catch(e) {}
                 hideLoading();
             }
         };
