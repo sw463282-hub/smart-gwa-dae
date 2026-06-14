@@ -1009,7 +1009,14 @@
                         <div class="form-group"><label>날짜</label><input type="date" id="expDate" class="form-control"></div>
                         <div class="form-group" style="flex: 2;"><label>지출 항목</label><input type="text" id="expDesc" class="form-control" placeholder="예: 개강총회 다과"></div>
                         <div class="form-group"><label>금액 (원)</label><input type="number" id="expAmount" class="form-control" placeholder="0"></div>
-                        <div class="form-group"><label>영수증 (선택)</label><input type="file" id="expReceipt" class="form-control" accept="image/*"></div>
+                        <div class="form-group">
+                            <label>영수증 (선택)</label>
+                            <div style="display: flex; gap: 10px; align-items: center; background: white; padding: 0.4rem; border: 1px solid #e2e8f0; border-radius: 8px;">
+                                <label for="expReceipt" class="btn-primary" style="padding: 0.5rem 1rem; cursor: pointer; text-align: center; margin: 0; font-size: 0.85rem;">파일 선택</label>
+                                <span id="expReceiptName" style="font-size: 0.85rem; color: gray; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px;">선택된 파일 없음</span>
+                                <input type="file" id="expReceipt" style="display: none;" accept="image/*" onchange="document.getElementById('expReceiptName').textContent = this.files[0] ? this.files[0].name : '선택된 파일 없음';">
+                            </div>
+                        </div>
                     </div>
                     <div style="text-align: right; margin-top: 10px;">
                         <button class="btn-primary" onclick="handleAddExpense()" style="padding: 0.8rem 2rem;">지출 추가하기</button>
@@ -1240,6 +1247,13 @@
                     class="btn-confirm" onclick="handleSaveVendor()">저장</button></div>
         </div>
     </div>
+    
+    <div class="modal-overlay" id="imageModal" style="z-index: 10000; background: rgba(0,0,0,0.85);">
+        <div style="position:relative; max-width: 90%; max-height: 90%; margin: auto; display:flex; flex-direction:column; align-items:center; justify-content:center; height: 100%;">
+            <button onclick="closeModal('imageModal')" style="position:absolute; top: 10px; right: 10px; background: white; color: black; border: none; font-size: 1.5rem; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">&times;</button>
+            <img id="imageViewerImg" src="" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+        </div>
+    </div>
 
     <!-- 자바스크립트 통합부 -->
     <script>
@@ -1401,7 +1415,8 @@
                 document.getElementById('dashFeeAmt').textContent = new Intl.NumberFormat('ko-KR').format(fee); document.getElementById('dashTarget').textContent = formatMoney(targetAmt); document.getElementById('dashDeposited').textContent = formatMoney(depAmt); document.getElementById('dashDepositRate').textContent = `달성률: ${dRate.toFixed(1)}%`; document.getElementById('dashBalance').textContent = formatMoney(bal); document.getElementById('dashExpense').textContent = `총 지출: ${formatMoney(totExp)}`; document.getElementById('dashPending').textContent = `${notp + pend} 명`; document.getElementById('dashPendingSub').textContent = `미입금 ${notp}명 / 확인중 ${pend}명`;
                 document.getElementById('studentTableBody').innerHTML = localState.students.map(s => `<tr><td>${s.student_id}</td><td>${s.name}</td><td>${s.phone}</td><td><span class="status-badge status-${s.payment_status === '완료' ? 'done' : s.payment_status === '확인중' ? 'pending' : 'none'}">${s.payment_status}</span></td><td class="admin-only" style="text-align:center;"><button class="btn-edit" onclick="openEditStudent('${s.student_id}')">수정</button></td></tr>`).join('');
                 document.getElementById('settleTotalIncome').textContent = formatMoney(depAmt); document.getElementById('settleTotalExpense').textContent = formatMoney(totExp); document.getElementById('settleBalance').textContent = formatMoney(bal); document.getElementById('settlementProgressText').textContent = `${dRate.toFixed(1)}%`; document.getElementById('settlementProgressBar').style.width = `${Math.min(dRate, 100)}%`;
-                document.getElementById('expenseTableBody').innerHTML = localState.expenses.sort((a, b) => new Date(b.expense_date) - new Date(a.expense_date)).map(e => `<tr><td>${e.expense_date}</td><td>${e.description}</td><td style="text-align:right; color:var(--accent-red); font-weight:600;">-${formatMoney(e.amount)}</td><td style="text-align:center;">${e.receipt_image ? `<a href="${e.receipt_image}" target="_blank" style="color:var(--accent-blue); text-decoration:underline;">보기</a>` : '<span style="color:gray;font-size:0.8rem;">없음</span>'}</td><td class="admin-only" style="text-align:center;"><button class="btn-delete" onclick="handleDeleteExpense(${e.expense_id})">삭제</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:gray;">내역 없음</td></tr>`;
+                window.showImage = (src) => { document.getElementById('imageViewerImg').src = src; document.getElementById('imageModal').style.display = 'flex'; };
+                document.getElementById('expenseTableBody').innerHTML = localState.expenses.sort((a, b) => new Date(b.expense_date) - new Date(a.expense_date)).map(e => `<tr><td>${e.expense_date}</td><td>${e.description}</td><td style="text-align:right; color:var(--accent-red); font-weight:600;">-${formatMoney(e.amount)}</td><td style="text-align:center;">${e.receipt_image ? `<button onclick="window.showImage('${e.receipt_image}')" class="btn-edit" style="background:var(--accent-blue);color:white;border:none;">사진 보기</button>` : '<span style="color:gray;font-size:0.8rem;">없음</span>'}</td><td class="admin-only" style="text-align:center;"><button class="btn-delete" onclick="handleDeleteExpense(${e.expense_id})">삭제</button></td></tr>`).join('') || `<tr><td colspan="5" style="text-align:center;color:gray;">내역 없음</td></tr>`;
 
                 // 2. 신청 파트 (동적 드롭다운 렌더링)
                 document.getElementById('appItem').innerHTML = '<option value="" disabled selected>항목 선택</option>' + localState.app_items.map(i => `<option value="${i.name}">${i.name}</option>`).join('');
@@ -1444,7 +1459,7 @@
         async function handleAddStudent() { const id = document.getElementById('addStdId').value, n = document.getElementById('addStdName').value, p = document.getElementById('addStdPhone').value; if (!id || !n) return showMessage('학번/이름 필수'); closeModal('addStudentModal'); showLoading(); try { await api.insertStudent({ student_id: id, name: n, phone: p, payment_status: '미입금' }); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
         function openConfigModal() { document.getElementById('configTarget').value = localState.system_config.target_amount || (localState.students.length * localState.system_config.fee_per_student); document.getElementById('configFee').value = localState.system_config.fee_per_student; document.getElementById('configModal').style.display = 'flex'; }
         async function handleSaveConfig() { const t = parseInt(document.getElementById('configTarget').value), f = parseInt(document.getElementById('configFee').value); if (isNaN(t) || isNaN(f)) return showMessage('금액 오류'); closeModal('configModal'); showLoading(); try { await api.updateConfig(t, f); await refreshDataAndUI(); } catch (e) { hideLoading(); } }
-        async function handleAddExpense() { const d = document.getElementById('expDate').value, desc = document.getElementById('expDesc').value, amt = parseInt(document.getElementById('expAmount').value); const file = document.getElementById('expReceipt').files[0]; if (!d || !desc || isNaN(amt)) return showMessage('날짜, 지출 항목, 금액을 모두 입력해주세요.'); showLoading(); try { await api.insertExpense({ expense_date: d, description: desc, amount: amt, receipt_file: file }); document.getElementById('expDesc').value = ''; document.getElementById('expAmount').value = ''; document.getElementById('expReceipt').value = ''; await refreshDataAndUI(); } catch (e) { hideLoading(); showMessage("지출 추가 실패: " + e.message); } }
+        async function handleAddExpense() { const d = document.getElementById('expDate').value, desc = document.getElementById('expDesc').value, amt = parseInt(document.getElementById('expAmount').value); const file = document.getElementById('expReceipt').files[0]; if (!d || !desc || isNaN(amt)) return showMessage('날짜, 지출 항목, 금액을 모두 입력해주세요.'); showLoading(); try { await api.insertExpense({ expense_date: d, description: desc, amount: amt, receipt_file: file }); document.getElementById('expDesc').value = ''; document.getElementById('expAmount').value = ''; document.getElementById('expReceipt').value = ''; document.getElementById('expReceiptName').textContent = '선택된 파일 없음'; await refreshDataAndUI(); } catch (e) { hideLoading(); showMessage("지출 추가 실패: " + e.message); } }
         function handleDeleteExpense(id) { showMessage('삭제하시겠습니까?', 'confirm', async () => { showLoading(); try { await api.deleteExpense(id); await refreshDataAndUI(); } catch (e) { hideLoading(); } }); }
 
         // CRUD (신청)
